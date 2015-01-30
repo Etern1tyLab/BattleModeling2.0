@@ -54,7 +54,7 @@ public class MainScreenController implements Initializable, ControlledScreen {
             service.setOAuth2Credentials(myController.getCredential());
 
             // Load sheet
-            URL metafeedUrl = new URL("https://spreadsheets.google.com/feeds/spreadsheets/1MPLaDZJ-Y4OfPwiRpTZqsfh8lBNgUL_XSMZ4my5bFsU");
+            URL metafeedUrl = new URL("https://spreadsheets.google.com/feeds/spreadsheets/CHANGE_ME!!!");
             SpreadsheetEntry spreadsheet = service.getEntry(metafeedUrl,SpreadsheetEntry.class);
             List<WorksheetEntry> worksheets = spreadsheet.getWorksheets();
 
