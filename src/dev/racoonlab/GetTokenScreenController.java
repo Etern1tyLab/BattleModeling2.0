@@ -32,11 +32,11 @@ public class GetTokenScreenController implements Initializable,
 
     // Retrieve the CLIENT_ID and CLIENT_SECRET from an APIs Console project:
     //     https://code.google.com/apis/console
-    static String CLIENT_ID = "";
-    static String CLIENT_SECRET = "";
+    static String CLIENT_ID = "CHANGE_ME!!!";
+    static String CLIENT_SECRET = "CHANGE_ME!!!";
     // Change the REDIRECT_URI value to your registered redirect URI for web
     // applications.
-    static String REDIRECT_URI = "";
+    static String REDIRECT_URI = "CHANGE_ME!!!";
 
     // Add other requested scopes.
     static List<String> SCOPES = Arrays.asList("https://spreadsheets.google.com/feeds");
