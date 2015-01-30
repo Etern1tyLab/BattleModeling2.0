@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="GoogleDataApi">
+    <CLASSES>
+      <root url="file://D:/GoogleDataApi/gdata/java/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://D:/GoogleDataApi/gdata/java/lib" recursive="false" />
+  </library>
+</component>
