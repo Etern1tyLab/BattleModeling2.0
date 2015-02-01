@@ -18,13 +18,17 @@ public class Main extends Application {
    // public static String screen3File = "Screen3.fxml";
 
 
+    /**
+     * Start method. Loads scenes
+     * @param primaryStage
+     * @throws Exception
+     */
     @Override
     public void start(Stage primaryStage) throws Exception{
 
         ScreensController mainContainer = new ScreensController();
         mainContainer.loadScreen(Main.getTokenScreenID, Main.getTokenScreenFile);
         mainContainer.loadScreen(Main.getMainScreenID, Main.getMainScreenFile);
-      //  mainContainer.loadScreen(Main.screen3ID, Main.screen3File);
 
         mainContainer.setScreen(Main.getTokenScreenID);
 
@@ -36,7 +40,12 @@ public class Main extends Application {
 
     }
 
-
+    /**
+     * Main method
+     * @param args
+     * @throws IOException
+     * @throws ServiceException
+     */
     public static void main(String[] args) throws IOException, ServiceException {
         launch(args);
     }

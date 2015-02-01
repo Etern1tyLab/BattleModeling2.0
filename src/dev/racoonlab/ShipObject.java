@@ -85,7 +85,7 @@ public class ShipObject {
 
     public void updateCurrentWeaponsList ()
     {
-        currentWeapons.removeAll();
+        currentWeapons.clear();
         for (int i = 0; i < weapons.size(); i++)
         {
             currentWeapons.add(this.weapons.get(i).getName());

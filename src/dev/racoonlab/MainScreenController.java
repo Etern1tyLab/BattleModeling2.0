@@ -159,6 +159,7 @@ public class MainScreenController implements Initializable, ControlledScreen {
 
 
                     team1WeaponList.setItems(null);
+                    team1Ships.get(team1CurrentSelectedShip).updateCurrentWeaponsList();
                     team1WeaponList.setItems(team1Ships.get(team1CurrentSelectedShip).getCurrentWeapons());
 
                 }
