@@ -7,9 +7,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="google-api-services-oauth2-v2-rev86-1.19.1" level="project" />
-    <orderEntry type="library" name="Oauth2.0Api" level="project" />
-    <orderEntry type="library" name="GoogleDataApi" level="project" />
-    <orderEntry type="library" name="GoogleDataApiDeps" level="project" />
+    <orderEntry type="library" name="GOauth2Libs" level="project" />
+    <orderEntry type="library" name="GOauth2Jar" level="project" />
+    <orderEntry type="library" name="GDataApi/deps" level="project" />
+    <orderEntry type="library" name="GDataApi/lib" level="project" />
   </component>
 </module>

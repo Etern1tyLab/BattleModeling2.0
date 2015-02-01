@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
-<?import java.net.*?>
-<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="800" minWidth="800" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.racoonlab.MainScreenController">
-   <top>
-      <MenuBar BorderPane.alignment="CENTER">
+<Pane minHeight="542.0" minWidth="724.0" prefHeight="542.0" prefWidth="724.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.racoonlab.MainScreenController">
+   <children>
+      <MenuBar layoutX="1.0" layoutY="2.0" prefHeight="25.0" prefWidth="724.0">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem mnemonicParsing="false" onAction="#loadSpreadsheet" text="Load Spreadsheet" />
+              <MenuItem mnemonicParsing="false" text="Load data" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
@@ -28,19 +25,62 @@
           </Menu>
         </menus>
       </MenuBar>
-   </top>
-   <left>
-      <ScrollPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-        <content>
-          <AnchorPane fx:id="leftScrollbar" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
-        </content>
-      </ScrollPane>
-   </left>
-   <right>
-      <ScrollPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-        <content>
-          <AnchorPane fx:id="rightScrollbar" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
-        </content>
-      </ScrollPane>
-   </right>
-</BorderPane>
+      <TabPane layoutY="27.0" prefHeight="517.0" prefWidth="724.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Team 1">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="430.0" prefWidth="600.0">
+                     <children>
+                        <ListView fx:id="team1ShipList" layoutX="14.0" layoutY="107.0" prefHeight="300.0" prefWidth="340.0" />
+                        <ListView fx:id="team1WeaponList" layoutX="369.0" layoutY="107.0" prefHeight="300.0" prefWidth="340.0" />
+                        <Label layoutX="17.0" layoutY="78.0" text="Add ship" />
+                        <Button fx:id="team1ShipAddButton" layoutX="245.0" layoutY="78.0" mnemonicParsing="false" onAction="#addShipTeam1" text="Add" />
+                        <ChoiceBox fx:id="team1ShipPicker" layoutX="83.0" layoutY="78.0" prefWidth="150.0" />
+                        <Label layoutX="366.0" layoutY="78.0" text="Add weapons" />
+                        <ChoiceBox fx:id="team1WeaponPicker" layoutX="446.0" layoutY="78.0" prefWidth="150.0" />
+                        <Button fx:id="team1WeaponAddButton" layoutX="612.0" layoutY="78.0" mnemonicParsing="false" onAction="#addWeaponTeam1" text="Add" />
+                        <Label fx:id="team1WeaponCount" layoutX="369.0" layoutY="407.0" text="Label" />
+                        <Button fx:id="team1ShipDelete" layoutX="290.0" layoutY="78.0" mnemonicParsing="false" onAction="#deleteSelectedShipTeam1" text="Delete" />
+                        <Button fx:id="team1WeaponDelete" layoutX="656.0" layoutY="78.0" mnemonicParsing="false" onAction="#deleteSelectedWeaponTeam1" text="Delete" />
+                        <Label layoutX="17.0" layoutY="30.0" text="Select race" />
+                        <ChoiceBox fx:id="team1RacePicker" layoutX="87.0" layoutY="30.0" prefWidth="150.0" />
+                        <Button fx:id="team1SetRaceButton" layoutX="249.0" layoutY="30.0" mnemonicParsing="false" onAction="#team1SetRace" text="Set race" />
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Team 2">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="430.0" prefWidth="724.0">
+                           <children>
+                              <ListView fx:id="team2ShipList" layoutX="14.0" layoutY="107.0" prefHeight="300.0" prefWidth="340.0" />
+                              <ListView fx:id="team2WeaponList" layoutX="369.0" layoutY="107.0" prefHeight="300.0" prefWidth="340.0" />
+                              <Label layoutX="17.0" layoutY="78.0" text="Add ship" />
+                              <Button fx:id="team2ShipAddButton" layoutX="245.0" layoutY="78.0" mnemonicParsing="false" onAction="#addShipTeam2" text="Add" />
+                              <ChoiceBox fx:id="team2ShipPicker" layoutX="83.0" layoutY="78.0" prefWidth="150.0" />
+                              <Label layoutX="366.0" layoutY="78.0" text="Add weapons" />
+                              <ChoiceBox fx:id="team2WeaponPicker" layoutX="446.0" layoutY="78.0" prefWidth="150.0" />
+                              <Button fx:id="team2WeaponAddButton" layoutX="612.0" layoutY="78.0" mnemonicParsing="false" onAction="#addWeaponTeam2" text="Add" />
+                              <Label fx:id="team2WeaponCount" layoutX="369.0" layoutY="407.0" text="Label" />
+                              <Button fx:id="team2ShipDelete2" layoutX="290.0" layoutY="78.0" mnemonicParsing="false" onAction="#deleteSelectedShipTeam2" text="Delete" />
+                              <Button fx:id="team2WeaponDelete" layoutX="656.0" layoutY="78.0" mnemonicParsing="false" onAction="#deleteSelectedWeaponTeam2" text="Delete" />
+                              <Button fx:id="team2SetRaceButton" layoutX="249.0" layoutY="30.0" mnemonicParsing="false" onAction="#team2SetRace" text="Set race" />
+                              <ChoiceBox fx:id="team2RacePicker" layoutX="87.0" layoutY="30.0" prefWidth="150.0" />
+                              <Label layoutX="17.0" layoutY="30.0" text="Select race" />
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+            <Tab text="Modeling">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</Pane>

@@ -1,5 +1,5 @@
 <component name="libraryTable">
-  <library name="libs">
+  <library name="GOauth2Libs">
     <CLASSES>
       <root url="file://E:/Downloads/google-api-services-oauth2-v1-rev88-java-1.19.1/oauth2/libs" />
     </CLASSES>

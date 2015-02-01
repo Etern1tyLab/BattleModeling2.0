@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="GDataApi/deps">
+    <CLASSES>
+      <root url="file://E:/Downloads/gdata-src.java-1.47.1 (1)/gdata/java/deps" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://E:/Downloads/gdata-src.java-1.47.1 (1)/gdata/java/deps" />
+    </SOURCES>
+    <jarDirectory url="file://E:/Downloads/gdata-src.java-1.47.1 (1)/gdata/java/deps" recursive="false" />
+    <jarDirectory url="file://E:/Downloads/gdata-src.java-1.47.1 (1)/gdata/java/deps" recursive="false" type="SOURCES" />
+  </library>
+</component>
