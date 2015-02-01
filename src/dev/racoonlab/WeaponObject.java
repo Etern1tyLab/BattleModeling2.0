@@ -10,9 +10,14 @@ public class WeaponObject {
     private int cdTime;
     private int magazine;
     private int reloadTime;
+
+
+
+    private int distance;
     private int currentCd;
     private int currentReloadTime;
     private int currentMagazine;
+
 
 
     public String getName() {
@@ -39,6 +44,10 @@ public class WeaponObject {
         return reloadTime;
     }
 
+    public int getDistance() {
+        return distance;
+    }
+
     public int getCurrentCd() {
         return currentCd;
     }
@@ -56,7 +65,7 @@ public class WeaponObject {
 
 
 
-    public WeaponObject(String _name, int _type, float _damage, int _cdTime, int _magazine, int _reloadTime)
+    public WeaponObject(String _name, int _type, float _damage, int _cdTime, int _magazine, int _reloadTime, int _distance)
     {
         this.name = _name;
         this.type = _type;
@@ -64,6 +73,7 @@ public class WeaponObject {
         this.cdTime = _cdTime;
         this.magazine = _magazine;
         this.reloadTime = _reloadTime;
+        this.distance = _distance;
         this.currentCd = 0;
         this.currentMagazine = _magazine;
         this.currentReloadTime = 0;
