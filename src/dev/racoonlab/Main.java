@@ -14,6 +14,8 @@ public class Main extends Application {
     public static String getTokenScreenFile = "FxmlData/getToken.fxml";
     public static String getMainScreenID = "Main Screen";
     public static String getMainScreenFile = "FxmlData/mainScreen.fxml";
+    public static String getModellingScreenID = "Modeling screen";
+    public static String getModellingScreenFile = "FxmlData/modellingScreen.fxml";
    // public static String screen3ID = "screen3";
    // public static String screen3File = "Screen3.fxml";
 
@@ -29,12 +31,14 @@ public class Main extends Application {
         ScreensController mainContainer = new ScreensController();
         mainContainer.loadScreen(Main.getTokenScreenID, Main.getTokenScreenFile);
         mainContainer.loadScreen(Main.getMainScreenID, Main.getMainScreenFile);
+        mainContainer.loadScreen(Main.getModellingScreenID, Main.getModellingScreenFile);
 
         mainContainer.setScreen(Main.getTokenScreenID);
 
         Group root = new Group();
         root.getChildren().addAll(mainContainer);
         Scene scene = new Scene(root);
+        primaryStage.setTitle("BattleModelling alpha");
         primaryStage.setScene(scene);
         primaryStage.show();
 

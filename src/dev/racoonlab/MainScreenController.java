@@ -10,20 +10,15 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.*;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
-/**
- * Created by Nikita on 30.01.2015.
- */
+
 public class MainScreenController implements Initializable, ControlledScreen {
 
     ScreensController myController;
@@ -39,9 +34,9 @@ public class MainScreenController implements Initializable, ControlledScreen {
     public Map<String, WeaponObject> team2WeaponsMap = new HashMap<String, WeaponObject>();
 
     //Contains team 1 ships
-    public Map<Integer, ShipObject> team1Ships = new HashMap<Integer, ShipObject>();
+    public List<ShipObject> team1Ships = new ArrayList();
     //Contains team 2 ships
-    public Map<Integer, ShipObject> team2Ships = new HashMap<Integer, ShipObject>();
+    public List<ShipObject> team2Ships = new ArrayList();
 
     //Used for populating ship choice box
     public static final ObservableList team1ShipNamesPicker = FXCollections.observableArrayList();
@@ -74,9 +69,6 @@ public class MainScreenController implements Initializable, ControlledScreen {
     public int team1CurrentSelectedShip;
     public int team2CurrentSelectedShip;
 
-    public ListView team1CurrentSelectedWeaponList;
-    public ListView team2CurrentSelectedWeaponList;
-
     @FXML
     private ChoiceBox team1ShipPicker;
     @FXML
@@ -107,7 +99,24 @@ public class MainScreenController implements Initializable, ControlledScreen {
     @FXML
     private Label team2WeaponCount;
 
-
+    @FXML
+    private TextField battleTime;
+    @FXML
+    private Slider team1Env;
+    @FXML
+    private Slider team1Will;
+    @FXML
+    private Slider team1Morale;
+    @FXML
+    private Slider team1Reaction;
+    @FXML
+    private Slider team2Env;
+    @FXML
+    private Slider team2Will;
+    @FXML
+    private Slider team2Morale;
+    @FXML
+    private Slider team2Reaction;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -115,11 +124,20 @@ public class MainScreenController implements Initializable, ControlledScreen {
         team2RacePicker.setItems(raceNames);
     }
 
+    /**
+     * @param _screenPage
+     */
     @Override
     public void setScreenParent(ScreensController _screenPage) {
         myController = _screenPage;
     }
 
+    /**
+     * @param _team
+     * @throws IOException
+     * @throws ServiceException
+     * @throws URISyntaxException
+     */
     public void getWorkSpreadsheet (String _team) throws IOException, ServiceException, URISyntaxException {
 
         /** Our view of Google Spreadsheets as an authenticated Google user. */
@@ -137,30 +155,24 @@ public class MainScreenController implements Initializable, ControlledScreen {
 
         if (_team.equals("team1"))
         {
+
             //Setting up team 1 ship list
-            team1ShipList.setItems(team1ShipNames);
-            team1ShipList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            updateShipList(_team);
+            team1ShipList.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                     System.out.println("Selected item id " + team1ShipList.getSelectionModel().getSelectedIndex());
-                    System.out.println("Ship array size " + team1Ships.size());
 
                     if (team1ShipList.getSelectionModel().getSelectedIndex() != -1)
                         team1CurrentSelectedShip = team1ShipList.getSelectionModel().getSelectedIndex();
 
-                    team1WeaponCount.setText(team1Ships.get(team1CurrentSelectedShip).getName() + "("
-                            + team1Ships.get(team1CurrentSelectedShip).getShield()
-                            + "/" + team1Ships.get(team1CurrentSelectedShip).getArmor() + ")" + " weapons : \r\n Close range - "
-                            + team1Ships.get(team1CurrentSelectedShip).getCloseWeaponCount() + "\r\n Middle range - " +
-                            +team1Ships.get(team1CurrentSelectedShip).getMiddleWeaponCount() + "\r\n Long range - "
-                            + team1Ships.get(team1CurrentSelectedShip).getLongWeaponCount());
-
-                    System.out.println(team1Ships.get(team1CurrentSelectedShip).getName());
+                    System.out.println(team1CurrentSelectedShip);
+                    updateShipInfo(team1Ships.get(team1CurrentSelectedShip), "team1");
 
 
                     team1WeaponList.setItems(null);
                     team1Ships.get(team1CurrentSelectedShip).updateCurrentWeaponsList();
-                    team1WeaponList.setItems(team1Ships.get(team1CurrentSelectedShip).getCurrentWeapons());
+                    team1WeaponList.setItems(team1Ships.get(team1CurrentSelectedShip).getCurrentWeaponsList());
 
                 }
             });
@@ -174,28 +186,22 @@ public class MainScreenController implements Initializable, ControlledScreen {
         else if (_team.equals("team2"))
         {
             //Setting up team 2 ship list
-            team2ShipList.setItems(team2ShipNames);
-            team2ShipList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            updateShipList(_team);
+            team2ShipList.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                     System.out.println("Selected item id " + team2ShipList.getSelectionModel().getSelectedIndex());
-                    System.out.println("Ship array size " + team2Ships.size());
 
                     if (team2ShipList.getSelectionModel().getSelectedIndex() != -1)
                         team2CurrentSelectedShip = team2ShipList.getSelectionModel().getSelectedIndex();
 
-                    team2WeaponCount.setText(team2Ships.get(team2CurrentSelectedShip).getName() + "("
-                            + team2Ships.get(team2CurrentSelectedShip).getShield()
-                            + "/" + team2Ships.get(team2CurrentSelectedShip).getArmor() + ")" + " weapons : \r\n Close range - "
-                            + team2Ships.get(team2CurrentSelectedShip).getCloseWeaponCount() + "\r\n Middle range - " +
-                            +team2Ships.get(team2CurrentSelectedShip).getMiddleWeaponCount() + "\r\n Long range - "
-                            + team2Ships.get(team2CurrentSelectedShip).getLongWeaponCount());
-
-                    System.out.println(team2Ships.get(team2CurrentSelectedShip).getName());
+                    System.out.println(team1CurrentSelectedShip);
+                    updateShipInfo(team1Ships.get(team1CurrentSelectedShip), "team2");
 
 
                     team2WeaponList.setItems(null);
-                    team2WeaponList.setItems(team2Ships.get(team2CurrentSelectedShip).getCurrentWeapons());
+                    team2Ships.get(team2CurrentSelectedShip).updateCurrentWeaponsList();
+                    team2WeaponList.setItems(team2Ships.get(team2CurrentSelectedShip).getCurrentWeaponsList());
 
                 }
             });
@@ -392,21 +398,21 @@ public class MainScreenController implements Initializable, ControlledScreen {
                     case 2:
                     {
                         weaponsMap.put("Ближняя дистанция", null);
-                        _weaponNames.add("Ближняя дистанция");
+                        _weaponNames.add("<Ближняя дистанция>");
                         System.out.println("Ближняя дистанция");
                         break;
                     }
                     case 12:
                     {
                         weaponsMap.put("Средняя дистанция", null);
-                        _weaponNames.add("Средняя дистанция");
+                        _weaponNames.add("<Средняя дистанция>");
                         System.out.println("Средняя дистанция");
                         break;
                     }
                     case 22:
                     {
                         weaponsMap.put("Дальняя дистанция", null);
-                        _weaponNames.add("Дальняя дистанция");
+                        _weaponNames.add("<Дальняя дистанция>");
                         System.out.println("Дальняя дистанция");
                         break;
                     }
@@ -647,6 +653,54 @@ public class MainScreenController implements Initializable, ControlledScreen {
 
     }
 
+    public void updateShipInfo(ShipObject _ship, String _team)
+    {
+        if (_team.equals("team1"))
+        {
+            team1WeaponCount.setText(_ship.getName() + "("
+                    + _ship.getShield()
+                    + "/" + _ship.getArmor() + ")" + " weapons : \r\n " +
+                    "Close range: " + _ship.currentCloseRangeCount()+ " of " + _ship.getCloseWeaponCount() + "\r\n " +
+                    "Middle range: " + _ship.currentMidRangeCount()+ " of " + _ship.getMiddleWeaponCount() + "\r\n " +
+                    "Long range: " + _ship.currentLongRangeCount()+ " of " + _ship.getLongWeaponCount());
+        }
+        else if (_team.equals("team2"))
+        {
+            team2WeaponCount.setText(_ship.getName() + "("
+                    + _ship.getShield()
+                    + "/" + _ship.getArmor() + ")" + " weapons : \r\n " +
+                    "Close range: " + _ship.currentCloseRangeCount()+ " of " + _ship.getCloseWeaponCount() + "\r\n " +
+                    "Middle range: " + _ship.currentMidRangeCount()+ " of " + _ship.getMiddleWeaponCount() + "\r\n " +
+                    "Long range: " + _ship.currentLongRangeCount()+ " of " + _ship.getLongWeaponCount());
+        }
+    }
+
+    public void updateShipList (String _team)
+    {
+        if (_team.equals("team1"))
+        {
+            team1ShipNames.clear();
+            for (int i = 0; i < team1Ships.size(); i++)
+            {
+
+                team1ShipNames.add(team1Ships.get(i).getName());
+            }
+            team1ShipList.setItems(team1ShipNames);
+
+        }
+        else if (_team.equals("team2"))
+        {
+            team2ShipNames.clear();
+            for (int i = 0; i < team2Ships.size(); i++)
+            {
+
+                team2ShipNames.add(team2Ships.get(i).getName());
+            }
+            team2ShipList.setItems(team2ShipNames);
+        }
+
+    }
+
     //Team 1 controls
     public void team1SetRace(ActionEvent actionEvent) throws ServiceException, IOException, URISyntaxException {
         if (team1Race.equals("") && team1ShipLoaded != true)
@@ -656,16 +710,17 @@ public class MainScreenController implements Initializable, ControlledScreen {
         }
     }
 
-    public void addShipTeam1(ActionEvent actionEvent) {
+    public void addShipTeam1(ActionEvent actionEvent) throws CloneNotSupportedException {
         //Add selected ship to list array
-        team1ShipNames.add((team1ShipNames.size() + 1) + "." +team1ShipPicker.getValue().toString());
+        team1ShipNames.add(team1ShipPicker.getValue().toString());
         //Add selected ship to team1
-        ShipObject ship= team1ShipsMap.get(team1ShipPicker.getValue().toString());
-        team1Ships.put(team1Ships.size(), ship);
+
+        ShipObject ship = (team1ShipsMap.get(team1ShipPicker.getValue().toString())).getClone();
+        team1Ships.add(ship);
         System.out.println("Added + " + team1Ships.get(team1Ships.size() - 1).getName() + " + ship to team1 collection! Now there is " + team1Ships.size() + " ships");
 
-        //Add ship to list
-        team1ShipList.setItems(team1ShipNames);
+        updateShipList("team1");
+
     }
 
     public void deleteSelectedShipTeam1(ActionEvent actionEvent) {
@@ -679,6 +734,8 @@ public class MainScreenController implements Initializable, ControlledScreen {
             team1ShipList.getItems().remove(selectedIdx);
             //Remove ship from team collection
             team1Ships.remove(selectedIdx);
+
+            updateShipList("team1");
             System.out.println("Removed ship from team1 collection! Now there is " + team1Ships.size() + " ships");
             team1ShipList.getSelectionModel().select(newSelectedIdx);
         }
@@ -686,16 +743,59 @@ public class MainScreenController implements Initializable, ControlledScreen {
 
     public void addWeaponTeam1(ActionEvent actionEvent) {
         //Add selected weapon to ship
-        WeaponObject weapon = team1WeaponsMap.get(team1WeaponPicker.getValue().toString());
-        team1Ships.get(team1CurrentSelectedShip).addWeapon(weapon);
-        System.out.println("Added weapon to team1 ship!");
+        String weaponName = team1WeaponPicker.getValue().toString();
+        if (!weaponName.equals("<Дальняя дистанция>") && !weaponName.equals("<Средняя дистанция>") && !weaponName.equals("<Ближняя дистанция>"))
+        {
+            ShipObject ship = team1Ships.get(team1CurrentSelectedShip);
+            WeaponObject weapon = team1WeaponsMap.get(weaponName).getClone();
+            if (weapon.getDistance() == 1 && ship.closeRangeAllowed())
+            {
+                ship.addWeapon(weapon);
+                System.out.println("Added weapon to team1 ship!");
+            }
+            else  if (weapon.getDistance() == 2 && ship.midRangeAllowed())
+            {
+                ship.addWeapon(weapon);
+                System.out.println("Added weapon to team1 ship!");
+            }
+            else  if (weapon.getDistance() == 3 && ship.longRangeAllowed())
+            {
+                ship.addWeapon(weapon);
+                System.out.println("Added weapon to team1 ship!");
+            }
+            updateShipInfo(ship, "team1");
+        }
 
     }
 
-
-
     public void deleteSelectedWeaponTeam1(ActionEvent actionEvent) {
+        final int selectedIdx = team1WeaponList.getSelectionModel().getSelectedIndex();
+        if (selectedIdx != -1) {
+            final int newSelectedIdx =
+                    (selectedIdx == team1ShipList.getItems().size() - 1)
+                            ? selectedIdx - 1
+                            : selectedIdx;
 
+            //Remove ship from team collection
+            ShipObject ship = team1Ships.get(team1CurrentSelectedShip);
+            if (selectedIdx > 0 && selectedIdx < ship.getMidSepartorIndex()) //Close range
+            {
+                ship.getCloseWeapons().remove(selectedIdx - 1);
+            }
+            else if (selectedIdx > ship.getMidSepartorIndex() && selectedIdx < ship.getLongSepartorIndex()) // Mid range
+            {
+                ship.getMidWeapons().remove(selectedIdx - ship.getMidSepartorIndex() - 1);
+            }
+            else if (selectedIdx > ship.getLongSepartorIndex()) // Long range
+            {
+                ship.getLongWeapons().remove(selectedIdx - ship.getLongSepartorIndex() - 1);
+            }
+
+            ship.updateCurrentWeaponsList();
+            updateShipInfo(ship, "team1");
+
+            team1WeaponList.getSelectionModel().select(newSelectedIdx);
+        }
     }
 
     //Team 2 controls
@@ -709,14 +809,15 @@ public class MainScreenController implements Initializable, ControlledScreen {
 
     public void addShipTeam2(ActionEvent actionEvent) {
         //Add selected ship to list array
-        team2ShipNames.add((team2ShipNames.size() + 1) + "." +team2ShipPicker.getValue().toString());
+        team2ShipNames.add(team2ShipPicker.getValue().toString());
         //Add selected ship to team1
-        ShipObject ship= team2ShipsMap.get(team2ShipPicker.getValue().toString());
-        team2Ships.put(team2Ships.size(), ship);
+
+        ShipObject ship = (team2ShipsMap.get(team2ShipPicker.getValue().toString())).getClone();
+        team2Ships.add(ship);
         System.out.println("Added + " + team2Ships.get(team2Ships.size() - 1).getName() + " + ship to team1 collection! Now there is " + team2Ships.size() + " ships");
 
-        //Add ship to list
-        team1ShipList.setItems(team2ShipNames);
+        updateShipList("team1");
+
     }
 
     public void deleteSelectedShipTeam2(ActionEvent actionEvent) {
@@ -730,6 +831,8 @@ public class MainScreenController implements Initializable, ControlledScreen {
             team2ShipList.getItems().remove(selectedIdx);
             //Remove ship from team collection
             team2Ships.remove(selectedIdx);
+
+            updateShipList("team2");
             System.out.println("Removed ship from team2 collection! Now there is " + team2Ships.size() + " ships");
             team2ShipList.getSelectionModel().select(newSelectedIdx);
         }
@@ -737,12 +840,71 @@ public class MainScreenController implements Initializable, ControlledScreen {
 
     public void addWeaponTeam2(ActionEvent actionEvent) {
         //Add selected weapon to ship
-        WeaponObject weapon = team2WeaponsMap.get(team2WeaponPicker.getValue().toString());
-        team2Ships.get(team2CurrentSelectedShip).addWeapon(weapon);
-        System.out.println("Added weapon to team1 ship!");
+        String weaponName = team2WeaponPicker.getValue().toString();
+        if (!weaponName.equals("<Дальняя дистанция>") && !weaponName.equals("<Средняя дистанция>") && !weaponName.equals("<Ближняя дистанция>"))
+        {
+            ShipObject ship = team2Ships.get(team2CurrentSelectedShip);
+            WeaponObject weapon = team2WeaponsMap.get(weaponName);
+            if (weapon.getDistance() == 1 && ship.closeRangeAllowed())
+            {
+                ship.addWeapon(weapon);
+                System.out.println("Added weapon to team1 ship!");
+            }
+            else  if (weapon.getDistance() == 2 && ship.midRangeAllowed())
+            {
+                ship.addWeapon(weapon);
+                System.out.println("Added weapon to team1 ship!");
+            }
+            else  if (weapon.getDistance() == 3 && ship.longRangeAllowed())
+            {
+                ship.addWeapon(weapon);
+                System.out.println("Added weapon to team1 ship!");
+            }
+            updateShipInfo(ship, "team2");
+        }
+
+
     }
 
     public void deleteSelectedWeaponTeam2(ActionEvent actionEvent) {
+        final int selectedIdx = team2WeaponList.getSelectionModel().getSelectedIndex();
+        if (selectedIdx != -1) {
+            final int newSelectedIdx =
+                    (selectedIdx == team2ShipList.getItems().size() - 1)
+                            ? selectedIdx - 1
+                            : selectedIdx;
+
+            //Remove ship from team collection
+            ShipObject ship = team1Ships.get(team2CurrentSelectedShip);
+            if (selectedIdx > 0 && selectedIdx < ship.getMidSepartorIndex() - 1) //Close range
+            {
+                ship.getCloseWeapons().remove(selectedIdx);
+            } else if (selectedIdx > ship.getMidSepartorIndex() && selectedIdx < ship.getLongSepartorIndex()) // Mid range
+            {
+                ship.getMidWeapons().remove(selectedIdx - ship.getMidSepartorIndex() - 1);
+            } else if (selectedIdx > ship.getLongSepartorIndex()) // Long range
+            {
+                ship.getLongWeapons().remove(selectedIdx - ship.getLongSepartorIndex() - 1);
+            }
+
+            ship.updateCurrentWeaponsList();
+            updateShipInfo(ship, "team2");
+
+            team2WeaponList.getSelectionModel().select(newSelectedIdx);
+        }
     }
 
+
+    public void startModeling(ActionEvent actionEvent) {
+
+        myController.setTeam1Ships(team1Ships);
+        myController.setTeam2Ships(team2Ships);
+        int[] team1Stats = {(int)team1Env.getValue(),(int)team1Will.getValue(), (int)team1Morale.getValue(), (int)team1Reaction.getValue()};
+        int[] team2Stats = {(int)team2Env.getValue(),(int)team2Will.getValue(), (int)team2Morale.getValue(), (int)team2Reaction.getValue()};
+        myController.setTeam1Stats(team1Stats);
+        myController.setTeam2Stats(team2Stats);
+
+        myController.setScreen(Main.getModellingScreenID);
+
+    }
 }

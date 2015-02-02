@@ -1,31 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.chart.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <Pane minHeight="542.0" minWidth="724.0" prefHeight="542.0" prefWidth="724.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.racoonlab.MainScreenController">
    <children>
-      <MenuBar layoutX="1.0" layoutY="2.0" prefHeight="25.0" prefWidth="724.0">
-        <menus>
-          <Menu mnemonicParsing="false" text="File">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Load data" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
-      <TabPane layoutY="27.0" prefHeight="517.0" prefWidth="724.0" tabClosingPolicy="UNAVAILABLE">
+      <TabPane layoutY="-4.0" prefHeight="548.0" prefWidth="724.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab text="Team 1">
             <content>
@@ -38,7 +20,7 @@
                         <Label layoutX="366.0" layoutY="78.0" text="Add weapons" />
                         <ChoiceBox fx:id="team1WeaponPicker" layoutX="446.0" layoutY="78.0" prefWidth="150.0" />
                         <Button fx:id="team1WeaponAddButton" layoutX="612.0" layoutY="78.0" mnemonicParsing="false" onAction="#addWeaponTeam1" text="Add" />
-                        <Label fx:id="team1WeaponCount" layoutX="369.0" layoutY="407.0" text="Label" />
+                        <Label fx:id="team1WeaponCount" layoutX="389.0" layoutY="407.0" text="Ship data" />
                         <Button fx:id="team1ShipDelete" layoutX="290.0" layoutY="78.0" mnemonicParsing="false" onAction="#deleteSelectedShipTeam1" text="Delete" />
                         <Button fx:id="team1WeaponDelete" layoutX="656.0" layoutY="78.0" mnemonicParsing="false" onAction="#deleteSelectedWeaponTeam1" text="Delete" />
                         <Label layoutX="17.0" layoutY="30.0" text="Select race" />
@@ -62,7 +44,7 @@
                               <Label layoutX="366.0" layoutY="78.0" text="Add weapons" />
                               <ChoiceBox fx:id="team2WeaponPicker" layoutX="446.0" layoutY="78.0" prefWidth="150.0" />
                               <Button fx:id="team2WeaponAddButton" layoutX="612.0" layoutY="78.0" mnemonicParsing="false" onAction="#addWeaponTeam2" text="Add" />
-                              <Label fx:id="team2WeaponCount" layoutX="369.0" layoutY="407.0" text="Label" />
+                              <Label fx:id="team2WeaponCount" layoutX="383.0" layoutY="408.0" text="Ship data" />
                               <Button fx:id="team2ShipDelete2" layoutX="290.0" layoutY="78.0" mnemonicParsing="false" onAction="#deleteSelectedShipTeam2" text="Delete" />
                               <Button fx:id="team2WeaponDelete" layoutX="656.0" layoutY="78.0" mnemonicParsing="false" onAction="#deleteSelectedWeaponTeam2" text="Delete" />
                               <Button fx:id="team2SetRaceButton" layoutX="249.0" layoutY="30.0" mnemonicParsing="false" onAction="#team2SetRace" text="Set race" />
@@ -77,7 +59,33 @@
           </Tab>
             <Tab text="Modeling">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Separator layoutX="359.0" layoutY="6.0" orientation="VERTICAL" prefHeight="313.0" prefWidth="7.0" />
+                        <Label layoutX="129.0" layoutY="14.0" text="Team1 settings" />
+                        <Label layoutX="498.0" layoutY="14.0" text="Team 2 settings" />
+                        <Slider fx:id="team1Env" blockIncrement="1.0" layoutX="120.0" layoutY="57.0" majorTickUnit="1.0" max="10.0" minorTickCount="0" prefHeight="14.0" prefWidth="190.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
+                        <Slider fx:id="team1Will" blockIncrement="1.0" layoutX="120.0" layoutY="113.0" majorTickUnit="1.0" max="20.0" minorTickCount="0" prefHeight="14.0" prefWidth="190.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
+                        <Slider fx:id="team1Morale" blockIncrement="1.0" layoutX="119.0" layoutY="170.0" majorTickUnit="1.0" max="10.0" min="-10.0" minorTickCount="0" prefHeight="14.0" prefWidth="191.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
+                        <Slider fx:id="team1Reaction" blockIncrement="1.0" layoutX="120.0" layoutY="237.0" majorTickUnit="1.0" max="20.0" minorTickCount="0" prefHeight="14.0" prefWidth="190.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
+                        <Separator layoutX="2.0" layoutY="322.0" prefHeight="2.0" prefWidth="718.0" />
+                        <Slider fx:id="team2Env" blockIncrement="1.0" layoutX="490.0" layoutY="57.0" majorTickUnit="1.0" max="20.0" minorTickCount="0" prefHeight="14.0" prefWidth="190.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
+                        <Slider fx:id="team2Will" blockIncrement="1.0" layoutX="490.0" layoutY="113.0" majorTickUnit="1.0" max="20.0" minorTickCount="0" prefHeight="14.0" prefWidth="190.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
+                        <Slider fx:id="team2Morale" blockIncrement="1.0" layoutX="490.0" layoutY="170.0" majorTickUnit="1.0" max="10.0" min="-10.0" minorTickCount="0" prefHeight="14.0" prefWidth="190.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
+                        <Slider fx:id="team2Reaction" blockIncrement="1.0" layoutX="490.0" layoutY="237.0" majorTickUnit="1.0" max="20.0" minorTickCount="0" prefHeight="14.0" prefWidth="190.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
+                        <Label layoutX="14.0" layoutY="56.0" text="Enviroment" />
+                        <Label layoutX="14.0" layoutY="112.0" text="WillPower" />
+                        <Label layoutX="14.0" layoutY="169.0" text="Morale" />
+                        <Label layoutX="14.0" layoutY="236.0" text="Reaction" />
+                        <Label layoutX="376.0" layoutY="56.0" text="Enviroment" />
+                        <Label layoutX="376.0" layoutY="112.0" text="WillPower" />
+                        <Label layoutX="376.0" layoutY="169.0" text="Morale" />
+                        <Label layoutX="376.0" layoutY="236.0" text="Reaction" />
+                        <Button fx:id="startModeling" layoutX="561.0" layoutY="373.0" mnemonicParsing="false" onAction="#startModeling" prefHeight="71.0" prefWidth="98.0" text="Start modeling" />
+                        <TextField fx:id="battleTime" alignment="CENTER" layoutX="118.0" layoutY="373.0" prefHeight="25.0" prefWidth="72.0" text="180" />
+                        <Label layoutX="14.0" layoutY="377.0" text="Set time of battle:" />
+                        <Label layoutX="196.0" layoutY="377.0" text="in seconds." />
+                     </children></AnchorPane>
               </content>
             </Tab>
         </tabs>

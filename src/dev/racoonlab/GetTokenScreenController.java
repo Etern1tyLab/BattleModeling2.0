@@ -21,9 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
-/**
- * Created by Nikita on 30.01.2015.
- */
+
 public class GetTokenScreenController implements Initializable,
         ControlledScreen{
 

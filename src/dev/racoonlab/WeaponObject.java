@@ -1,8 +1,5 @@
 package dev.racoonlab;
 
-/**
- * Created by Lab on 01.02.2015.
- */
 public class WeaponObject {
     private String name;
     private int type;
@@ -61,7 +58,10 @@ public class WeaponObject {
     }
 
 
-
+    public WeaponObject getClone ()
+    {
+        return new WeaponObject(this.name, this.type, this.damage, this.cdTime, this.magazine, this.reloadTime, this.distance);
+    }
 
 
 

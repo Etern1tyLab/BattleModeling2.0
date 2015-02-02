@@ -4,7 +4,10 @@ import com.google.api.client.auth.oauth2.Credential;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -15,16 +18,53 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.util.Duration;
 
-/**
- *
- * @author Angie
- */
 public class ScreensController  extends StackPane {
     //Holds the screens to be displayed
 
     private HashMap<String, Node> screens = new HashMap<String, Node>();
 
     private Credential credential;
+
+    //Contains team 1 ships
+    private int[] team1Stats;
+    private List<ShipObject> team1Ships = new ArrayList();
+    //Contains team 2 ships
+    private List<ShipObject> team2Ships = new ArrayList();
+    private int[] team2Stats;
+
+    public int[] getTeam1Stats() {
+        return team1Stats;
+    }
+
+    public List<ShipObject> getTeam1Ships() {
+        return team1Ships;
+    }
+
+    public List<ShipObject> getTeam2Ships() {
+        return team2Ships;
+    }
+
+    public int[] getTeam2Stats() {
+        return team2Stats;
+    }
+
+    public void setTeam1Stats(int[] team1Stats) {
+        this.team1Stats = team1Stats;
+    }
+
+    public void setTeam1Ships(List<ShipObject> team1Ships) {
+        this.team1Ships = team1Ships;
+    }
+
+    public void setTeam2Ships(List<ShipObject> team2Ships) {
+        this.team2Ships = team2Ships;
+    }
+
+    public void setTeam2Stats(int[] team2Stats) {
+        this.team2Stats = team2Stats;
+    }
+
+
     public Credential getCredential() {
         return credential;
     }
