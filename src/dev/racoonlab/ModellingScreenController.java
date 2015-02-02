@@ -1,5 +1,6 @@
 package dev.racoonlab;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
@@ -32,12 +33,12 @@ public class ModellingScreenController implements Initializable, ControlledScree
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		team1Stats = myController.getTeam1Stats();
+		/*team1Stats = myController.getTeam1Stats();
 		team2Stats = myController.getTeam2Stats();
 		team1Ships = myController.getTeam1Ships();
 		team2Ships = myController.getTeam2Ships();
 
-		startModellingTable();
+		startModellingTable();*/
 	}
 
 	private void startModellingTable() {
@@ -47,5 +48,11 @@ public class ModellingScreenController implements Initializable, ControlledScree
 
 		System.out.println(team1Ships.get(0).getName());
 		modTable.getColumns().addAll(firstNameCol, lastNameCol, emailCol);
+	}
+
+	public void handleGetToken(ActionEvent actionEvent) {
+	}
+
+	public void handleSignIn(ActionEvent actionEvent) {
 	}
 }

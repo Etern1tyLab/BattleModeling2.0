@@ -1,45 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
+<?import javafx.scene.chart.*?>
 <?import java.lang.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="542.0" minWidth="724.0" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.racoonlab.ModellingScreenController">
-   <children>
-      <TabPane prefHeight="542.0" prefWidth="724.0" tabClosingPolicy="UNAVAILABLE">
-        <tabs>
-          <Tab text="Table">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <ScrollPane layoutX="14.0" layoutY="14.0" prefHeight="486.0" prefWidth="696.0">
-                          <content>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="491.0" prefWidth="703.0">
-                                 <children>
-                                    <TableView fx:id="modTable" layoutX="-5.0" layoutY="-5.0" prefHeight="490.0" prefWidth="700.0">
-                                      <columns>
-                                        <TableColumn prefWidth="75.0" text="Time" />
-                                      </columns>
-                                    </TableView>
-                                 </children>
-                              </AnchorPane>
-                          </content>
-                        </ScrollPane>
-                     </children>
-                  </AnchorPane>
-            </content>
-          </Tab>
-          <Tab text="Team 1 graphs">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-            </content>
-          </Tab>
-            <Tab text="Team 2 graphs">
-               <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-               </content>
-            </Tab>
-        </tabs>
-      </TabPane>
-   </children>
+
+<Pane minHeight="542.0" minWidth="724.0" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.racoonlab.ModellingScreenController">
+    <children>
+        <TabPane prefHeight="542.0" prefWidth="724.0" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab text="Table">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <ScrollPane layoutX="14.0" layoutY="14.0" prefHeight="486.0" prefWidth="696.0">
+                                    <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="491.0" prefWidth="703.0">
+                                            <children>
+                                                <TableView fx:id="modTable" layoutX="-5.0" layoutY="-5.0" prefHeight="490.0" prefWidth="700.0">
+                                                    <columns>
+                                                        <TableColumn prefWidth="75.0" text="Time" />
+                                                    </columns>
+                                                </TableView>
+                                            </children>
+                                        </AnchorPane>
+                                    </content>
+                                </ScrollPane>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="Team 1 graphs">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                    </content>
+                </Tab>
+                <Tab text="Team 2 graphs">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </children>
 </Pane>

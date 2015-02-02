@@ -14,7 +14,7 @@ public class Main extends Application {
     public static String getTokenScreenFile = "FxmlData/getToken.fxml";
     public static String getMainScreenID = "Main Screen";
     public static String getMainScreenFile = "FxmlData/mainScreen.fxml";
-    public static String getModellingScreenID = "Modeling screen";
+    public static String getModellingScreenID = "Modelling screen";
     public static String getModellingScreenFile = "FxmlData/modellingScreen.fxml";
    // public static String screen3ID = "screen3";
    // public static String screen3File = "Screen3.fxml";
