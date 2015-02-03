@@ -11,5 +11,6 @@
     <orderEntry type="library" name="GOauth2Jar" level="project" />
     <orderEntry type="library" name="GDataApi/deps" level="project" />
     <orderEntry type="library" name="GDataApi/lib" level="project" />
+    <orderEntry type="library" name="controlsfx-8.20.8" level="application" />
   </component>
 </module>

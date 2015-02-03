@@ -196,7 +196,7 @@ public class MainScreenController implements Initializable, ControlledScreen {
                         team2CurrentSelectedShip = team2ShipList.getSelectionModel().getSelectedIndex();
 
                     System.out.println(team1CurrentSelectedShip);
-                    updateShipInfo(team1Ships.get(team1CurrentSelectedShip), "team2");
+                    updateShipInfo(team2Ships.get(team2CurrentSelectedShip), "team2");
 
 
                     team2WeaponList.setItems(null);
@@ -382,7 +382,7 @@ public class MainScreenController implements Initializable, ControlledScreen {
                 weaponsMap.put(cellEntryList.get(0).getCell().getValue(), // Weapon name key
                         new WeaponObject(cellEntryList.get(0).getCell().getValue(),  // Weapon name
                                 Integer.valueOf(cellEntryList.get(1).getCell().getValue()), // Weapon type
-                                Float.valueOf(cellEntryList.get(2).getCell().getValue()), // Weapon dame
+                                Double.valueOf(cellEntryList.get(2).getCell().getValue()), // Weapon damage
                                 Integer.valueOf(cellEntryList.get(3).getCell().getValue()), // Weapon cd
                                 Integer.valueOf(cellEntryList.get(4).getCell().getValue()), // Weapon magazine
                                 Integer.valueOf(cellEntryList.get(6).getCell().getValue()), // Weapon reload
@@ -429,7 +429,7 @@ public class MainScreenController implements Initializable, ControlledScreen {
         return weaponsMap;
     }
 
-    public float calcShield(String _smallCount, String _midCount, String _bigCount, String _team)
+    public double calcShield(String _smallCount, String _midCount, String _bigCount, String _team)
     {
 
 
@@ -478,7 +478,7 @@ public class MainScreenController implements Initializable, ControlledScreen {
         return small*Integer.valueOf(_smallCount) + mid*Integer.valueOf(_midCount) + big*Integer.valueOf(_bigCount);
     }
 
-    public float calcShieldRegen(String _smallCount, String _midCount, String _bigCount, String _team)
+    public double calcShieldRegen(String _smallCount, String _midCount, String _bigCount, String _team)
     {
         String race =  _team.equals("team1") ? team1Race : team2Race;
         int small;
@@ -525,7 +525,7 @@ public class MainScreenController implements Initializable, ControlledScreen {
         return small*Integer.valueOf(_smallCount) + mid*Integer.valueOf(_midCount) + big*Integer.valueOf(_bigCount);
     }
 
-    public float calcArmor(String _smallCount, String _midCount, String _bigCount, String _team)
+    public double calcArmor(String _smallCount, String _midCount, String _bigCount, String _team)
     {
         String race =  _team.equals("team1") ? team1Race : team2Race;
         int small;
@@ -572,7 +572,7 @@ public class MainScreenController implements Initializable, ControlledScreen {
         return small*Integer.valueOf(_smallCount) + mid*Integer.valueOf(_midCount) + big*Integer.valueOf(_bigCount);
     }
 
-    public float calcArmorRegen(String _smallCount, String _midCount, String _bigCount, String _team)
+    public double calcArmorRegen(String _smallCount, String _midCount, String _bigCount, String _team)
     {
         String race =  _team.equals("team1") ? team1Race : team2Race;
         int small;
@@ -903,6 +903,7 @@ public class MainScreenController implements Initializable, ControlledScreen {
         int[] team2Stats = {(int)team2Env.getValue(),(int)team2Will.getValue(), (int)team2Morale.getValue(), (int)team2Reaction.getValue()};
         myController.setTeam1Stats(team1Stats);
         myController.setTeam2Stats(team2Stats);
+        myController.setTime(Integer.valueOf(battleTime.getText()));
 
         myController.setScreen(Main.getModellingScreenID);
 

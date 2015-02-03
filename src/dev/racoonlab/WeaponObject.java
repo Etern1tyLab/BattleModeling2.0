@@ -3,7 +3,7 @@ package dev.racoonlab;
 public class WeaponObject {
     private String name;
     private int type;
-    private float damage;
+    private double damage;
     private int cdTime;
     private int magazine;
     private int reloadTime;
@@ -15,7 +15,17 @@ public class WeaponObject {
     private int currentReloadTime;
     private int currentMagazine;
 
+    public void setCurrentMagazine(int currentMagazine) {
+        this.currentMagazine = currentMagazine;
+    }
 
+    public void setCurrentCd(int currentCd) {
+        this.currentCd = currentCd;
+    }
+
+    public void setCurrentReloadTime(int currentReloadTime) {
+        this.currentReloadTime = currentReloadTime;
+    }
 
     public String getName() {
         return name;
@@ -25,7 +35,7 @@ public class WeaponObject {
         return type;
     }
 
-    public float getDamage() {
+    public double getDamage() {
         return damage;
     }
 
@@ -65,7 +75,7 @@ public class WeaponObject {
 
 
 
-    public WeaponObject(String _name, int _type, float _damage, int _cdTime, int _magazine, int _reloadTime, int _distance)
+    public WeaponObject(String _name, int _type, double _damage, int _cdTime, int _magazine, int _reloadTime, int _distance)
     {
         this.name = _name;
         this.type = _type;

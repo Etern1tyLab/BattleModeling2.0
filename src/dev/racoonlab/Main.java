@@ -2,6 +2,7 @@ package dev.racoonlab;
 
 import com.google.gdata.util.ServiceException;
 import javafx.application.Application;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -53,4 +54,7 @@ public class Main extends Application {
     public static void main(String[] args) throws IOException, ServiceException {
         launch(args);
     }
+
+
+
 }

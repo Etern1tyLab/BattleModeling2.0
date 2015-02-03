@@ -14,10 +14,12 @@ public class ShipObject implements Serializable {
     private int closeWeaponCount;
     private int middleWeaponCount;
     private int longWeaponCount;
-    private float shield;
-    private float shieldRegen;
-    private float armor;
-    private float armorRegen;
+    private double shield;
+    private double currentShield;
+    private double shieldRegen;
+    private double armor;
+    private double currentArmor;
+    private double armorRegen;
 
     private int midSepartorIndex;
     private int longSepartorIndex;
@@ -27,6 +29,36 @@ public class ShipObject implements Serializable {
     private List<WeaponObject> longWeapons = new ArrayList<>();
 
     private ObservableList<String> currentWeaponsList = FXCollections.observableArrayList();
+
+    public double getArmorRegen() {
+        return armorRegen;
+    }
+
+    public double getShieldRegen() {
+        return shieldRegen;
+    }
+
+    public double getCurrentArmor() {
+        return currentArmor;
+    }
+
+    public void setCurrentArmor(double currentArmor) {
+        if (currentArmor < 0)
+            this.currentArmor = 0;
+        else
+            this.currentArmor = currentArmor;
+    }
+
+    public double getCurrentShield() {
+        return currentShield;
+    }
+
+    public void setCurrentShield(double currentShield) {
+        if (currentShield < 0)
+            this.currentShield = 0;
+        else
+            this.currentShield = currentShield;
+    }
 
     public List<WeaponObject> getLongWeapons() {
         return longWeapons;
@@ -64,11 +96,11 @@ public class ShipObject implements Serializable {
         return longWeaponCount;
     }
 
-    public float getShield() {
+    public double getShield() {
         return shield;
     }
 
-    public float getArmor() {
+    public double getArmor() {
         return armor;
     }
 
@@ -83,7 +115,7 @@ public class ShipObject implements Serializable {
         return new ShipObject(this.name, this.closeWeaponCount, this.middleWeaponCount, this.longWeaponCount, this.shield, this.armor, this.shieldRegen, this.armorRegen);
     }
 
-    public ShipObject(String _name, int _closeWeaponCount, int _middleWeaponCount, int _longWeaponCount, float _shield, float _armor, float _shieldRegen, float _armorRegen)
+    public ShipObject(String _name, int _closeWeaponCount, int _middleWeaponCount, int _longWeaponCount, double _shield, double _armor, double _shieldRegen, double _armorRegen)
     {
         this.name = _name;
         this.closeWeaponCount = _closeWeaponCount;
@@ -93,6 +125,8 @@ public class ShipObject implements Serializable {
         this.armor = _armor;
         this.shieldRegen = _shieldRegen;
         this.armorRegen = _armorRegen;
+        this.currentArmor = _armor;
+        this.currentShield = _shield;
     }
 
     public void addWeapon(WeaponObject weaponObject)
@@ -169,6 +203,14 @@ public class ShipObject implements Serializable {
     public boolean longRangeAllowed ()
     {
         if (longWeaponCount > longWeapons.size())
+            return true;
+        else
+            return false;
+    }
+
+    public boolean isDead ()
+    {
+        if (currentArmor == 0 && currentShield ==0)
             return true;
         else
             return false;

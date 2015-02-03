@@ -5,40 +5,133 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
-<Pane minHeight="542.0" minWidth="724.0" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.racoonlab.ModellingScreenController">
+<Pane minHeight="542.0" minWidth="724.0" onMouseEntered="#loadData" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.racoonlab.ModellingScreenController">
     <children>
         <TabPane prefHeight="542.0" prefWidth="724.0" tabClosingPolicy="UNAVAILABLE">
             <tabs>
                 <Tab text="Table">
                     <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                            <children>
-                                <ScrollPane layoutX="14.0" layoutY="14.0" prefHeight="486.0" prefWidth="696.0">
-                                    <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="491.0" prefWidth="703.0">
-                                            <children>
-                                                <TableView fx:id="modTable" layoutX="-5.0" layoutY="-5.0" prefHeight="490.0" prefWidth="700.0">
-                                                    <columns>
-                                                        <TableColumn prefWidth="75.0" text="Time" />
-                                                    </columns>
-                                                </TableView>
-                                            </children>
-                                        </AnchorPane>
-                                    </content>
-                                </ScrollPane>
-                            </children>
-                        </AnchorPane>
+                        <AnchorPane fx:id="modSpreadSheet" prefHeight="542.0" prefWidth="724.0" />
                     </content>
                 </Tab>
                 <Tab text="Team 1 graphs">
                     <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TreeView fx:id="team1TreeView" prefHeight="513.0" prefWidth="150.0" />
+                        <Accordion layoutX="150.0" prefHeight="514.0" prefWidth="574.0">
+                          <panes>
+                            <TitledPane animated="false" text="Damage">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <AreaChart fx:id="team1DamageChart" prefHeight="439.0" prefWidth="573.0">
+                                            <xAxis>
+                                              <CategoryAxis label="Time" side="BOTTOM" />
+                                            </xAxis>
+                                            <yAxis>
+                                              <NumberAxis label="Damage" side="LEFT" />
+                                            </yAxis>
+                                          </AreaChart>
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </TitledPane>
+                            <TitledPane animated="false" prefHeight="448.0" prefWidth="576.0" text="Shield">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <AreaChart fx:id="team1ShieldChart" prefHeight="439.0" prefWidth="573.0">
+                                             <xAxis>
+                                                <CategoryAxis label="Time" side="BOTTOM" />
+                                             </xAxis>
+                                             <yAxis>
+                                                <NumberAxis label="Shield" side="LEFT" />
+                                             </yAxis>
+                                          </AreaChart>
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </TitledPane>
+                            <TitledPane animated="false" text="Armor">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <AreaChart fx:id="team1ArmorChart" prefHeight="439.0" prefWidth="573.0">
+                                             <xAxis>
+                                                <CategoryAxis label="Time" side="BOTTOM" />
+                                             </xAxis>
+                                             <yAxis>
+                                                <NumberAxis label="Armor" side="LEFT" />
+                                             </yAxis>
+                                          </AreaChart>
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </TitledPane>
+                          </panes>
+                        </Accordion>
+                     </children></AnchorPane>
                     </content>
                 </Tab>
                 <Tab text="Team 2 graphs">
                     <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TreeView fx:id="team2TreeView" prefHeight="513.0" prefWidth="150.0" />
+                        <Accordion layoutX="149.0" prefHeight="514.0" prefWidth="574.0">
+                           <panes>
+                              <TitledPane animated="false" text="Damage">
+                                 <content>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <AreaChart fx:id="team2DamageChart" prefHeight="439.0" prefWidth="573.0">
+                                             <xAxis>
+                                                <CategoryAxis label="Time" side="BOTTOM" />
+                                             </xAxis>
+                                             <yAxis>
+                                                <NumberAxis label="Damage" side="LEFT" />
+                                             </yAxis>
+                                          </AreaChart>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </TitledPane>
+                              <TitledPane animated="false" prefHeight="448.0" prefWidth="576.0" text="Shield">
+                                 <content>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <AreaChart fx:id="team2ShieldChart" prefHeight="439.0" prefWidth="573.0">
+                                             <xAxis>
+                                                <CategoryAxis label="Time" side="BOTTOM" />
+                                             </xAxis>
+                                             <yAxis>
+                                                <NumberAxis label="Shield" side="LEFT" />
+                                             </yAxis>
+                                          </AreaChart>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </TitledPane>
+                              <TitledPane animated="false" text="Armor">
+                                 <content>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <AreaChart fx:id="team2ArmorChart" prefHeight="439.0" prefWidth="573.0">
+                                             <xAxis>
+                                                <CategoryAxis label="Time" side="BOTTOM" />
+                                             </xAxis>
+                                             <yAxis>
+                                                <NumberAxis label="Armor" side="LEFT" />
+                                             </yAxis>
+                                          </AreaChart>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </TitledPane>
+                           </panes>
+                        </Accordion>
+                     </children></AnchorPane>
                     </content>
                 </Tab>
             </tabs>
