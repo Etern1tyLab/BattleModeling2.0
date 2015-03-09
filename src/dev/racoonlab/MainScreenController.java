@@ -3,16 +3,26 @@ package dev.racoonlab;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.spreadsheet.*;
 import com.google.gdata.util.ServiceException;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import org.controlsfx.dialog.Dialogs;
+import sun.rmi.runtime.Log;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -21,12 +31,12 @@ import java.util.*;
 
 public class MainScreenController implements Initializable, ControlledScreen {
 
-    ScreensController myController;
+    static ScreensController myController;
 
     //Contains all ships from Google Spreadsheet
-    public Map<String, ShipObject> team1ShipsMap = new HashMap<String, ShipObject>();
+    public static Map<String, ShipObject> team1ShipsMap = new HashMap<String, ShipObject>();
     //Contains all ships from Google Spreadsheet
-    public Map<String, ShipObject> team2ShipsMap = new HashMap<String, ShipObject>();
+    public static Map<String, ShipObject> team2ShipsMap = new HashMap<String, ShipObject>();
 
     //Contains all ships from Google Spreadsheet
     public Map<String, WeaponObject> team1WeaponsMap = new HashMap<String, WeaponObject>();
@@ -38,14 +48,11 @@ public class MainScreenController implements Initializable, ControlledScreen {
     //Contains team 2 ships
     public List<ShipObject> team2Ships = new ArrayList();
 
-    //Used for populating ship choice box
-    public static final ObservableList team1ShipNamesPicker = FXCollections.observableArrayList();
-    //Used for populating ship choice box
-    public static final ObservableList team2ShipNamesPicker = FXCollections.observableArrayList();
+    //Used for populating team ship box
+    public static final ObservableList teamShipNamesPicker = FXCollections.observableArrayList();
     //Used for populating team 1 weapon box
-    public static final ObservableList team1WeaponNames = FXCollections.observableArrayList();
-    //Used for populating team 2 weapon box
-    public static final ObservableList team2WeaponNames = FXCollections.observableArrayList();
+    public static final ObservableList teamWeaponNamesPicker = FXCollections.observableArrayList();
+
     //Used for populating race choice box
     public static final ObservableList raceNames = FXCollections.observableArrayList("Земляне", "Аксотеотли", "Дредды", "СайберМаар", "ТуанТэ");
 
@@ -54,13 +61,13 @@ public class MainScreenController implements Initializable, ControlledScreen {
     //Used for populating team 2 ship list
     public static final ObservableList team2ShipNames = FXCollections.observableArrayList();
 
-    public String team1Race = "";
-    public String team2Race = "";
+    public static String team1Race = "";
+    public static String team2Race = "";
 
-    public List<CellEntry> shipShields = new ArrayList<CellEntry>();
-    public List<CellEntry> shipShieldsRegen = new ArrayList<CellEntry>();
-    public List<CellEntry> shipArmors = new ArrayList<CellEntry>();
-    public List<CellEntry> shipArmorsRegen = new ArrayList<CellEntry>();
+    public static List<CellEntry> shipShields = new ArrayList<CellEntry>();
+    public static List<CellEntry> shipShieldsRegen = new ArrayList<CellEntry>();
+    public static List<CellEntry> shipArmors = new ArrayList<CellEntry>();
+    public static List<CellEntry> shipArmorsRegen = new ArrayList<CellEntry>();
 
     public boolean team1ShipLoaded = false;
     public boolean team2ShipLoaded = false;
@@ -70,14 +77,14 @@ public class MainScreenController implements Initializable, ControlledScreen {
     public int team2CurrentSelectedShip;
 
     @FXML
-    private ChoiceBox team1ShipPicker;
+    private ChoiceBox<String> team1ShipPicker;
     @FXML
-    private ChoiceBox team2ShipPicker;
+    private ChoiceBox<String> team2ShipPicker;
 
     @FXML
-    private ChoiceBox team1WeaponPicker;
+    private ChoiceBox<String> team1WeaponPicker;
     @FXML
-    private ChoiceBox team2WeaponPicker;
+    private ChoiceBox<String> team2WeaponPicker;
 
     @FXML
     private ChoiceBox team1RacePicker;
@@ -138,7 +145,7 @@ public class MainScreenController implements Initializable, ControlledScreen {
      * @throws ServiceException
      * @throws URISyntaxException
      */
-    public void getWorkSpreadsheet (String _team) throws IOException, ServiceException, URISyntaxException {
+    public void getWorkSpreadsheet (String _team)  {
 
         /** Our view of Google Spreadsheets as an authenticated Google user. */
         SpreadsheetService service =
@@ -146,11 +153,30 @@ public class MainScreenController implements Initializable, ControlledScreen {
         service.setOAuth2Credentials(myController.getCredential());
 
         // Load sheet
-        URL metafeedUrl = new URL("https://spreadsheets.google.com/feeds/spreadsheets/1MPLaDZJ-Y4OfPwiRpTZqsfh8lBNgUL_XSMZ4my5bFsU");
-        SpreadsheetEntry spreadsheet = service.getEntry(metafeedUrl,SpreadsheetEntry.class);
+        URL metafeedUrl = null;
+        try {
+            metafeedUrl = new URL("https://spreadsheets.google.com/feeds/spreadsheets/1hjg-U4bq94FDgQj7iJnjOtFZAVXWkEYPGaoLCKJMQzc");
+        } catch (MalformedURLException e) {
+            showDialogException(e.getMessage());
+        }
+        SpreadsheetEntry spreadsheet = null;
+        try {
+            spreadsheet = service.getEntry(metafeedUrl,SpreadsheetEntry.class);
+        } catch (IOException e) {
+            showDialogException(e.getMessage());
+        } catch (ServiceException e) {
+            showDialogException(e.getMessage());
+        }
 
         //Loading worksheets
-        WorksheetFeed worksheetFeed = service.getFeed(spreadsheet.getWorksheetFeedUrl(), WorksheetFeed.class);
+        WorksheetFeed worksheetFeed = null;
+        try {
+            worksheetFeed = service.getFeed(spreadsheet.getWorksheetFeedUrl(), WorksheetFeed.class);
+        } catch (IOException e) {
+            showDialogException(e.getMessage());
+        } catch (ServiceException e) {
+            showDialogException(e.getMessage());
+        }
         List<WorksheetEntry> worksheets = worksheetFeed.getEntries();
 
         if (_team.equals("team1"))
@@ -179,8 +205,6 @@ public class MainScreenController implements Initializable, ControlledScreen {
 
             //Loading team 1 ships
             loadShipsData(worksheets, service, _team);
-            //Loading team 1 weapons
-            team1WeaponsMap = loadWeaponData(worksheets, service, _team, team1WeaponNames);
 
         }
         else if (_team.equals("team2"))
@@ -206,128 +230,86 @@ public class MainScreenController implements Initializable, ControlledScreen {
                 }
             });
 
+
             //Loading team 2 ships
             loadShipsData(worksheets, service, _team);
-            //Loading team 2 weapons
-            team2WeaponsMap = loadWeaponData(worksheets, service, _team, team2WeaponNames);
+
         }
 
     }
 
     //Load ships data
-    public void loadShipsData(List<WorksheetEntry> _worksheets, SpreadsheetService _service, String _team) throws IOException, ServiceException, URISyntaxException {
+    public void loadShipsData(List<WorksheetEntry> _worksheets, SpreadsheetService _service, String _team) {
 
         //TODO refactor code duplicates
         //First, lets load armor and shield stats
-        WorksheetEntry armorAndShieldWorksheet = _worksheets.get(2);
+        WorksheetEntry armorAndShieldWorksheet = _worksheets.get(1);
 
         //Hardcoded...TODO
         //Getting shields
-        URL shieldFeedUrl = createURI(armorAndShieldWorksheet.getCellFeedUrl().toString(), 5, "ShieldAndArmor").toURL();
-        CellFeed shieldFeed = _service.getFeed(shieldFeedUrl, CellFeed.class);
+        URL shieldFeedUrl = createURI(armorAndShieldWorksheet.getCellFeedUrl().toString(), 5, "ShieldAndArmor");
+        CellFeed shieldFeed =getFeed(_service, shieldFeedUrl);
         shipShields = shieldFeed.getEntries();
 
-
         //Getting shields regen
-        URL shieldRegenFeedUrl = createURI(armorAndShieldWorksheet.getCellFeedUrl().toString(), 6, "ShieldAndArmor").toURL();
-        CellFeed shieldRegenFeed = _service.getFeed(shieldRegenFeedUrl, CellFeed.class);
+        URL shieldRegenFeedUrl = createURI(armorAndShieldWorksheet.getCellFeedUrl().toString(), 6, "ShieldAndArmor");
+        CellFeed shieldRegenFeed = getFeed(_service, shieldRegenFeedUrl);
         shipShieldsRegen = shieldRegenFeed.getEntries();
 
-
         //Getting armor
-        URL armorFeedUrl = createURI(armorAndShieldWorksheet.getCellFeedUrl().toString(), 8, "ShieldAndArmor").toURL();
-        CellFeed armorFeed = _service.getFeed(armorFeedUrl, CellFeed.class);
+        URL armorFeedUrl = createURI(armorAndShieldWorksheet.getCellFeedUrl().toString(), 8, "ShieldAndArmor");
+        CellFeed armorFeed = getFeed(_service, armorFeedUrl);
         shipArmors = armorFeed.getEntries();
 
-
-
         //Getting armor regen
-        URL armorsRegenFeedUrl = createURI(armorAndShieldWorksheet.getCellFeedUrl().toString(), 9, "ShieldAndArmor").toURL();
-        CellFeed armorsRegenFeed = _service.getFeed(armorsRegenFeedUrl, CellFeed.class);
+        URL armorsRegenFeedUrl = createURI(armorAndShieldWorksheet.getCellFeedUrl().toString(), 9, "ShieldAndArmor");
+        CellFeed armorsRegenFeed = getFeed(_service, armorsRegenFeedUrl);
         shipArmorsRegen = armorsRegenFeed.getEntries();
 
-        if (_team.equals("team1"))
-        {
-            //Lets load ships stats
-            WorksheetEntry shipsWorksheet = _worksheets.get(3);
-            //Hardcoded too...TODO
-            for (int i = 3; i<= 18; i++)
-            {
-                URL cellFeedUrl = createURI(shipsWorksheet.getCellFeedUrl().toString(), i, "Ships").toURL();
-                CellFeed cellFeed = _service.getFeed(cellFeedUrl, CellFeed.class);
-                List<CellEntry> cellEntryList = cellFeed.getEntries();
-                team1ShipsMap.put(cellEntryList.get(0).getCell().getValue(),  //Key value by name
-                        new ShipObject(cellEntryList.get(0).getCell().getValue(), // Ships name
-                                Integer.valueOf(cellEntryList.get(1).getCell().getValue()), // Ships close range weapon count
-                                Integer.valueOf(cellEntryList.get(2).getCell().getValue()), // Ships middle range weapon count
-                                Integer.valueOf(cellEntryList.get(3).getCell().getValue()), // Ships long range weapon count
-                                calcShield( cellEntryList.get(4).getCell().getValue(),
-                                        cellEntryList.get(5).getCell().getValue(),
-                                        cellEntryList.get(6).getCell().getValue(),
-                                        "team1"), // Ships shield
-                                calcArmor( cellEntryList.get(8).getCell().getValue(),
-                                        cellEntryList.get(9).getCell().getValue(),
-                                        cellEntryList.get(10).getCell().getValue(),
-                                        "team1"), // Ships armor
-                                calcShieldRegen(cellEntryList.get(4).getCell().getValue(),
-                                        cellEntryList.get(5).getCell().getValue(),
-                                        cellEntryList.get(6).getCell().getValue(),
-                                        "team1"), // Ships shield regen
-                                calcArmorRegen(cellEntryList.get(8).getCell().getValue(),
-                                        cellEntryList.get(9).getCell().getValue(),
-                                        cellEntryList.get(10).getCell().getValue(),
-                                        "team1") // Ships armor regen
-                        ));
+        //Lets load ships stats
 
-                team1ShipNamesPicker.add(cellEntryList.get(0).getCell().getValue());
-                System.out.println("Team 1 - " + cellEntryList.get(0).getCell().getValue());
+        //Hardcoded too...TODO
+        WorksheetEntry shipsWorksheet = _worksheets.get(0);
+
+        //Creating  dialog and  service to get data
+        ShipDataService shipService = new ShipDataService();
+        shipService.setWorksheet(shipsWorksheet);
+        shipService.setService(_service);
+        shipService.setTeam(_team);
+        shipService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+            @Override
+            public void handle(WorkerStateEvent t) {
+                if (_team.equals("team1"))
+                {
+                    team1ShipPicker.setItems(teamShipNamesPicker);
+                    team1ShipLoaded = shipService.getValue();
+                    loadWeaponData(_worksheets, _service, _team);
+                }
+
+                else
+                {
+                    team2ShipLoaded = shipService.getValue();
+                    team2ShipPicker.setItems(teamShipNamesPicker);
+                    loadWeaponData(_worksheets, _service, _team);
+                }
+
             }
-            team1ShipPicker.setItems(team1ShipNamesPicker);
-            team1ShipLoaded = true;
-        }
-        else  if (_team.equals("team2"))
-        {
-            //Lets load ships stats
-            WorksheetEntry shipsWorksheet = _worksheets.get(3);
-            //Hardcoded too...TODO
-            for (int i = 3; i<= 18; i++)
-            {
-                URL cellFeedUrl = createURI(shipsWorksheet.getCellFeedUrl().toString(), i, "Ships").toURL();
-                CellFeed cellFeed = _service.getFeed(cellFeedUrl, CellFeed.class);
-                List<CellEntry> cellEntryList = cellFeed.getEntries();
-                team2ShipsMap.put(cellEntryList.get(0).getCell().getValue(),  //Key value by name
-                        new ShipObject(cellEntryList.get(0).getCell().getValue(), // Ships name
-                                Integer.valueOf(cellEntryList.get(1).getCell().getValue()), // Ships close range weapon count
-                                Integer.valueOf(cellEntryList.get(2).getCell().getValue()), // Ships middle range weapon count
-                                Integer.valueOf(cellEntryList.get(3).getCell().getValue()), // Ships long range weapon count
-                                calcShield( cellEntryList.get(4).getCell().getValue(),
-                                        cellEntryList.get(5).getCell().getValue(),
-                                        cellEntryList.get(6).getCell().getValue(),
-                                        "team2"), // Ships shield
-                                calcArmor( cellEntryList.get(8).getCell().getValue(),
-                                        cellEntryList.get(9).getCell().getValue(),
-                                        cellEntryList.get(10).getCell().getValue(),
-                                        "team2"), // Ships armor
-                                calcShieldRegen(cellEntryList.get(4).getCell().getValue(),
-                                        cellEntryList.get(5).getCell().getValue(),
-                                        cellEntryList.get(6).getCell().getValue(),
-                                        "team2"), // Ships shield regen
-                                calcArmorRegen(cellEntryList.get(8).getCell().getValue(),
-                                        cellEntryList.get(9).getCell().getValue(),
-                                        cellEntryList.get(10).getCell().getValue(),
-                                        "team2") // Ships armor regen
-                        ));
-                team2ShipNamesPicker.add(cellEntryList.get(0).getCell().getValue());
-                System.out.println("Team 2 - " + cellEntryList.get(0).getCell().getValue());
-            }
-            team2ShipPicker.setItems(team2ShipNamesPicker);
-            team2ShipLoaded = true;
-        }
+        });
+
+        Dialogs.create()
+                .owner(myController.getStage())
+                .title("Ship's loading.")
+                .masthead("Loading ship's . . .")
+                .showWorkerProgress(shipService);
+
+        shipService.start();
 
     }
 
+
     //Load ships data
-    public Map<String, WeaponObject> loadWeaponData(List<WorksheetEntry> _worksheets, SpreadsheetService _service, String _team, ObservableList _weaponNames) throws IOException, ServiceException {
+    public void loadWeaponData(List<WorksheetEntry> _worksheets, SpreadsheetService _service, String _team){
 
         String race;
         if (_team.equals("team1"))
@@ -335,101 +317,67 @@ public class MainScreenController implements Initializable, ControlledScreen {
         else
             race = team2Race;
 
+		System.out.println("Loading weapons");
         WorksheetEntry weaponWorksheet;
         switch(race){
             default: System.out.print("");
             case "Земляне":
             {
-                weaponWorksheet = _worksheets.get(4);
+                weaponWorksheet = _worksheets.get(2);
                 break;
             }
             case "Аксотеотли":
             {
-                weaponWorksheet = _worksheets.get(5);
+                weaponWorksheet = _worksheets.get(3);
                 break;
             }
             case "Дредды":
             {
-                weaponWorksheet = _worksheets.get(6);
+                weaponWorksheet = _worksheets.get(4);
                 break;
             }
             case "СайберМаар":
             {
-                weaponWorksheet = _worksheets.get(7);
+                weaponWorksheet = _worksheets.get(5);
                 break;
             }
             case "ТуанТэ":
             {
-                weaponWorksheet = _worksheets.get(8);
+                weaponWorksheet = _worksheets.get(6);
                 break;
             }
         }
 
-        Map<String, WeaponObject> weaponsMap = new HashMap<String, WeaponObject>();
+        WeaponDataService weaponDataService = new WeaponDataService();
+        weaponDataService.setWorksheet(weaponWorksheet);
+        weaponDataService.setService(_service);
+        weaponDataService.setTeam(_team);
+		System.out.println("Starting service");
+        weaponDataService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
-        for (int i = 2; i<= 31; i++) {
-            int distance = 1;
-            if (i > 12)
-                distance = 2;
-            if (i > 22)
-                distance = 3;
-
-            if (i != 2 && i != 12 && i != 22)
-            {
-                URL cellFeedUrl = createURI(weaponWorksheet.getCellFeedUrl().toString(), i, "Weapons").toURL();
-                CellFeed cellFeed = _service.getFeed(cellFeedUrl, CellFeed.class);
-                List<CellEntry> cellEntryList = cellFeed.getEntries();
-                weaponsMap.put(cellEntryList.get(0).getCell().getValue(), // Weapon name key
-                        new WeaponObject(cellEntryList.get(0).getCell().getValue(),  // Weapon name
-                                Integer.valueOf(cellEntryList.get(1).getCell().getValue()), // Weapon type
-                                Double.valueOf(cellEntryList.get(2).getCell().getValue()), // Weapon damage
-                                Integer.valueOf(cellEntryList.get(3).getCell().getValue()), // Weapon cd
-                                Integer.valueOf(cellEntryList.get(4).getCell().getValue()), // Weapon magazine
-                                Integer.valueOf(cellEntryList.get(6).getCell().getValue()), // Weapon reload
-                                distance // Weapon distance
-                        ));
-                _weaponNames.add(cellEntryList.get(0).getCell().getValue());
-                System.out.println(cellEntryList.get(0).getCell().getValue());
-            }
-            else
-            {
-                switch(i){
-                    default: System.out.print("");
-                    case 2:
-                    {
-                        weaponsMap.put("Ближняя дистанция", null);
-                        _weaponNames.add("<Ближняя дистанция>");
-                        System.out.println("Ближняя дистанция");
-                        break;
-                    }
-                    case 12:
-                    {
-                        weaponsMap.put("Средняя дистанция", null);
-                        _weaponNames.add("<Средняя дистанция>");
-                        System.out.println("Средняя дистанция");
-                        break;
-                    }
-                    case 22:
-                    {
-                        weaponsMap.put("Дальняя дистанция", null);
-                        _weaponNames.add("<Дальняя дистанция>");
-                        System.out.println("Дальняя дистанция");
-                        break;
-                    }
+            @Override
+            public void handle(WorkerStateEvent t) {
+                if (_team.equals("team1")) {
+                    team1WeaponPicker.setItems(teamWeaponNamesPicker);
+                    team1WeaponsMap = weaponDataService.getValue();
+                } else {
+                    team2WeaponPicker.setItems(teamWeaponNamesPicker);
+                    team2WeaponsMap = weaponDataService.getValue();
                 }
 
             }
-        }
+        });
 
-        if (_team.equals("team1"))
-            team1WeaponPicker.setItems(_weaponNames);
-        else
-            team2WeaponPicker.setItems(_weaponNames);
+        Dialogs.create()
+                .owner(myController.getStage())
+                .title("Weapon's loading.")
+                .masthead("Loading weapons . . .")
+                .showWorkerProgress(weaponDataService);
 
-        return weaponsMap;
+        weaponDataService.start();
     }
 
-    public double calcShield(String _smallCount, String _midCount, String _bigCount, String _team)
+    public static double calcShield(String _smallCount, String _midCount, String _bigCount, String _team)
     {
 
 
@@ -478,7 +426,7 @@ public class MainScreenController implements Initializable, ControlledScreen {
         return small*Integer.valueOf(_smallCount) + mid*Integer.valueOf(_midCount) + big*Integer.valueOf(_bigCount);
     }
 
-    public double calcShieldRegen(String _smallCount, String _midCount, String _bigCount, String _team)
+    public static double calcShieldRegen(String _smallCount, String _midCount, String _bigCount, String _team)
     {
         String race =  _team.equals("team1") ? team1Race : team2Race;
         int small;
@@ -525,7 +473,7 @@ public class MainScreenController implements Initializable, ControlledScreen {
         return small*Integer.valueOf(_smallCount) + mid*Integer.valueOf(_midCount) + big*Integer.valueOf(_bigCount);
     }
 
-    public double calcArmor(String _smallCount, String _midCount, String _bigCount, String _team)
+    public static double calcArmor(String _smallCount, String _midCount, String _bigCount, String _team)
     {
         String race =  _team.equals("team1") ? team1Race : team2Race;
         int small;
@@ -572,7 +520,7 @@ public class MainScreenController implements Initializable, ControlledScreen {
         return small*Integer.valueOf(_smallCount) + mid*Integer.valueOf(_midCount) + big*Integer.valueOf(_bigCount);
     }
 
-    public double calcArmorRegen(String _smallCount, String _midCount, String _bigCount, String _team)
+    public static double calcArmorRegen(String _smallCount, String _midCount, String _bigCount, String _team)
     {
         String race =  _team.equals("team1") ? team1Race : team2Race;
         int small;
@@ -619,32 +567,41 @@ public class MainScreenController implements Initializable, ControlledScreen {
         return small*Integer.valueOf(_smallCount) + mid*Integer.valueOf(_midCount) + big*Integer.valueOf(_bigCount);
     }
 
-    public URI createURI (String _uriStart, int _rowNumber, String _type)
+    public static URL createURI(String _uriStart, int _rowNumber, String _type)
     {
         if (_type.equals("ShieldAndArmor"))
         {
             try {
-                return new URI(_uriStart + "?min-row=" + _rowNumber + "&max-row="+ _rowNumber +"&min-col=2&max-col=16");
+                return new URI(_uriStart + "?min-row=" + _rowNumber + "&max-row="+ _rowNumber +"&min-col=2&max-col=16").toURL();
             } catch (URISyntaxException e) {
-                e.printStackTrace();
+                showDialogException(e.getMessage());
+                return null;
+            } catch (MalformedURLException e) {
+                showDialogException(e.getMessage());
                 return null;
             }
         }
         else if (_type.equals("Ships"))
         {
             try {
-                return new URI(_uriStart + "?min-row=" + _rowNumber + "&max-row="+ _rowNumber +"&min-col=1&max-col=12");
+                return new URI(_uriStart + "?min-row=" + _rowNumber + "&max-row="+ _rowNumber +"&min-col=1&max-col=14").toURL();
             } catch (URISyntaxException e) {
-                e.printStackTrace();
+                showDialogException(e.getMessage());
+                return null;
+            } catch (MalformedURLException e) {
+                showDialogException(e.getMessage());
                 return null;
             }
         }
         else if (_type.equals("Weapons"))
         {
             try {
-                return new URI(_uriStart + "?min-row=" + _rowNumber + "&max-row="+ _rowNumber +"&min-col=3&max-col=9");
+                return new URI(_uriStart + "?min-row=" + _rowNumber + "&max-row="+ _rowNumber +"&min-col=2&max-col=11").toURL();
             } catch (URISyntaxException e) {
-                e.printStackTrace();
+                showDialogException(e.getMessage());
+                return null;
+            } catch (MalformedURLException e) {
+                showDialogException(e.getMessage());
                 return null;
             }
         }
@@ -662,7 +619,8 @@ public class MainScreenController implements Initializable, ControlledScreen {
                     + "/" + _ship.getArmor() + ")" + " weapons : \r\n " +
                     "Close range: " + _ship.currentCloseRangeCount()+ " of " + _ship.getCloseWeaponCount() + "\r\n " +
                     "Middle range: " + _ship.currentMidRangeCount()+ " of " + _ship.getMiddleWeaponCount() + "\r\n " +
-                    "Long range: " + _ship.currentLongRangeCount()+ " of " + _ship.getLongWeaponCount());
+                    "Long range: " + _ship.currentLongRangeCount()+ " of " + _ship.getLongWeaponCount()+ "\r\n" +
+					"Current energy: " + _ship.getMaxWeaponEnergy() + "/" + _ship.getCurrentWeaponEnergy());
         }
         else if (_team.equals("team2"))
         {
@@ -671,7 +629,8 @@ public class MainScreenController implements Initializable, ControlledScreen {
                     + "/" + _ship.getArmor() + ")" + " weapons : \r\n " +
                     "Close range: " + _ship.currentCloseRangeCount()+ " of " + _ship.getCloseWeaponCount() + "\r\n " +
                     "Middle range: " + _ship.currentMidRangeCount()+ " of " + _ship.getMiddleWeaponCount() + "\r\n " +
-                    "Long range: " + _ship.currentLongRangeCount()+ " of " + _ship.getLongWeaponCount());
+                    "Long range: " + _ship.currentLongRangeCount()+ " of " + _ship.getLongWeaponCount() + "\r\n" +
+					"Current energy: " + _ship.getMaxWeaponEnergy() + "/" + _ship.getCurrentWeaponEnergy());
         }
     }
 
@@ -701,8 +660,38 @@ public class MainScreenController implements Initializable, ControlledScreen {
 
     }
 
+    public static void showDialogException(String e)
+    {
+        Exception exception= new Exception(e);
+        Dialogs.create()
+                .owner(myController.getStage())
+                .title("Exception Dialog")
+                .masthead("Look, an Exception Dialog")
+                .message("Ooops, there was an exception!")
+                .showException(exception);
+    }
+
+    /**
+     *
+     * @param _service
+     * @param armorsRegenFeedUrl
+     * @return
+     */
+    public static CellFeed getFeed(SpreadsheetService _service, URL armorsRegenFeedUrl)
+    {
+        try {
+            return _service.getFeed(armorsRegenFeedUrl, CellFeed.class);
+        } catch (IOException e) {
+            showDialogException(e.getMessage());
+            return null;
+        } catch (ServiceException e) {
+            showDialogException(e.getMessage());
+            return null;
+        }
+    }
+
     //Team 1 controls
-    public void team1SetRace(ActionEvent actionEvent) throws ServiceException, IOException, URISyntaxException {
+    public void team1SetRace(ActionEvent actionEvent)  {
         if (team1Race.equals("") && team1ShipLoaded != true)
         {
             team1Race = team1RacePicker.getValue().toString();
@@ -710,7 +699,7 @@ public class MainScreenController implements Initializable, ControlledScreen {
         }
     }
 
-    public void addShipTeam1(ActionEvent actionEvent) throws CloneNotSupportedException {
+    public void addShipTeam1(ActionEvent actionEvent)  {
         //Add selected ship to list array
         team1ShipNames.add(team1ShipPicker.getValue().toString());
         //Add selected ship to team1
@@ -748,19 +737,22 @@ public class MainScreenController implements Initializable, ControlledScreen {
         {
             ShipObject ship = team1Ships.get(team1CurrentSelectedShip);
             WeaponObject weapon = team1WeaponsMap.get(weaponName).getClone();
-            if (weapon.getDistance() == 1 && ship.closeRangeAllowed())
+			double weaponConsuption = ship.getCurrentWeaponEnergy() + weapon.getEnergyConsumption();
+			if (weapon.getDistance() == 1 && ship.closeRangeAllowed() && ship.getMaxWeaponEnergy() >= weaponConsuption)
             {
                 ship.addWeapon(weapon);
+				ship.setCurrentWeaponEnergy(ship.getCurrentWeaponEnergy() + weapon.getEnergyConsumption());
+                System.out.println("Added weapon to team1 ship!");
+            } else  if (weapon.getDistance() == 2 && ship.midRangeAllowed() && ship.getMaxWeaponEnergy() >= weaponConsuption)
+            {
+                ship.addWeapon(weapon);
+				ship.setCurrentWeaponEnergy(ship.getCurrentWeaponEnergy() + weapon.getEnergyConsumption());
                 System.out.println("Added weapon to team1 ship!");
             }
-            else  if (weapon.getDistance() == 2 && ship.midRangeAllowed())
+            else  if (weapon.getDistance() == 3 && ship.longRangeAllowed() && ship.getMaxWeaponEnergy() >= weaponConsuption)
             {
                 ship.addWeapon(weapon);
-                System.out.println("Added weapon to team1 ship!");
-            }
-            else  if (weapon.getDistance() == 3 && ship.longRangeAllowed())
-            {
-                ship.addWeapon(weapon);
+				ship.setCurrentWeaponEnergy(ship.getCurrentWeaponEnergy() + weapon.getEnergyConsumption());
                 System.out.println("Added weapon to team1 ship!");
             }
             updateShipInfo(ship, "team1");
@@ -778,18 +770,19 @@ public class MainScreenController implements Initializable, ControlledScreen {
 
             //Remove ship from team collection
             ShipObject ship = team1Ships.get(team1CurrentSelectedShip);
-            if (selectedIdx > 0 && selectedIdx < ship.getMidSepartorIndex()) //Close range
-            {
-                ship.getCloseWeapons().remove(selectedIdx - 1);
-            }
-            else if (selectedIdx > ship.getMidSepartorIndex() && selectedIdx < ship.getLongSepartorIndex()) // Mid range
-            {
-                ship.getMidWeapons().remove(selectedIdx - ship.getMidSepartorIndex() - 1);
-            }
-            else if (selectedIdx > ship.getLongSepartorIndex()) // Long range
-            {
-                ship.getLongWeapons().remove(selectedIdx - ship.getLongSepartorIndex() - 1);
-            }
+			if (selectedIdx > 0 && selectedIdx < ship.getMidSepartorIndex() - 1) //Close range
+			{
+				ship.getCloseWeapons().remove(selectedIdx);
+				ship.setCurrentWeaponEnergy(ship.getCurrentWeaponEnergy() - ship.getCloseWeapons().get(selectedIdx).getEnergyConsumption());
+			} else if (selectedIdx > ship.getMidSepartorIndex() && selectedIdx < ship.getLongSepartorIndex()) // Mid range
+			{
+				ship.getMidWeapons().remove(selectedIdx - ship.getMidSepartorIndex() - 1);
+				ship.setCurrentWeaponEnergy(ship.getCurrentWeaponEnergy() - ship.getMidWeapons().get(selectedIdx).getEnergyConsumption());
+			} else if (selectedIdx > ship.getLongSepartorIndex()) // Long range
+			{
+				ship.getLongWeapons().remove(selectedIdx - ship.getLongSepartorIndex() - 1);
+				ship.setCurrentWeaponEnergy(ship.getCurrentWeaponEnergy() - ship.getLongWeapons().get(selectedIdx).getEnergyConsumption());
+			}
 
             ship.updateCurrentWeaponsList();
             updateShipInfo(ship, "team1");
@@ -799,7 +792,7 @@ public class MainScreenController implements Initializable, ControlledScreen {
     }
 
     //Team 2 controls
-    public void team2SetRace(ActionEvent actionEvent) throws ServiceException, IOException, URISyntaxException {
+    public void team2SetRace(ActionEvent actionEvent)  {
         if (team2Race.equals("") && team2ShipLoaded != true)
         {
             team2Race = team2RacePicker.getValue().toString();
@@ -845,19 +838,23 @@ public class MainScreenController implements Initializable, ControlledScreen {
         {
             ShipObject ship = team2Ships.get(team2CurrentSelectedShip);
             WeaponObject weapon = team2WeaponsMap.get(weaponName);
-            if (weapon.getDistance() == 1 && ship.closeRangeAllowed())
+			double weaponConsuption = ship.getCurrentWeaponEnergy() + weapon.getEnergyConsumption();
+            if (weapon.getDistance() == 1 && ship.closeRangeAllowed() && ship.getMaxWeaponEnergy() >= weaponConsuption)
             {
                 ship.addWeapon(weapon);
+				ship.setCurrentWeaponEnergy(ship.getCurrentWeaponEnergy() + weapon.getEnergyConsumption());
                 System.out.println("Added weapon to team1 ship!");
             }
-            else  if (weapon.getDistance() == 2 && ship.midRangeAllowed())
+            else  if (weapon.getDistance() == 2 && ship.midRangeAllowed() && ship.getMaxWeaponEnergy() >= weaponConsuption)
             {
                 ship.addWeapon(weapon);
+				ship.setCurrentWeaponEnergy(ship.getCurrentWeaponEnergy() + weapon.getEnergyConsumption());
                 System.out.println("Added weapon to team1 ship!");
             }
-            else  if (weapon.getDistance() == 3 && ship.longRangeAllowed())
+            else  if (weapon.getDistance() == 3 && ship.longRangeAllowed() &&  ship.getMaxWeaponEnergy() >= weaponConsuption)
             {
                 ship.addWeapon(weapon);
+				ship.setCurrentWeaponEnergy(ship.getCurrentWeaponEnergy() + weapon.getEnergyConsumption());
                 System.out.println("Added weapon to team1 ship!");
             }
             updateShipInfo(ship, "team2");
@@ -879,12 +876,15 @@ public class MainScreenController implements Initializable, ControlledScreen {
             if (selectedIdx > 0 && selectedIdx < ship.getMidSepartorIndex() - 1) //Close range
             {
                 ship.getCloseWeapons().remove(selectedIdx);
+				ship.setCurrentWeaponEnergy(ship.getCurrentWeaponEnergy() - ship.getCloseWeapons().get(selectedIdx).getEnergyConsumption());
             } else if (selectedIdx > ship.getMidSepartorIndex() && selectedIdx < ship.getLongSepartorIndex()) // Mid range
             {
                 ship.getMidWeapons().remove(selectedIdx - ship.getMidSepartorIndex() - 1);
+				ship.setCurrentWeaponEnergy(ship.getCurrentWeaponEnergy() - ship.getMidWeapons().get(selectedIdx).getEnergyConsumption());
             } else if (selectedIdx > ship.getLongSepartorIndex()) // Long range
             {
                 ship.getLongWeapons().remove(selectedIdx - ship.getLongSepartorIndex() - 1);
+				ship.setCurrentWeaponEnergy(ship.getCurrentWeaponEnergy() - ship.getLongWeapons().get(selectedIdx).getEnergyConsumption());
             }
 
             ship.updateCurrentWeaponsList();
@@ -906,6 +906,207 @@ public class MainScreenController implements Initializable, ControlledScreen {
         myController.setTime(Integer.valueOf(battleTime.getText()));
 
         myController.setScreen(Main.getModellingScreenID);
+
+    }
+
+
+
+    private static class ShipDataService extends Service<Boolean> {
+
+        private WorksheetEntry shipsWorksheet;
+        private SpreadsheetService service;
+        private String team;
+
+        public final void setWorksheet(WorksheetEntry _worksheet) {
+            this.shipsWorksheet = _worksheet;
+        }
+
+        public final void setService(SpreadsheetService _service) {
+            this.service = _service;
+        }
+
+        public final void setTeam(String _team) {
+            this.team = _team;
+        }
+
+
+        @Override
+        protected Task<Boolean> createTask() {
+            return new Task<Boolean>() {
+                @Override
+                protected Boolean call() throws InterruptedException {
+                    //Load data containers
+                    Map<String, ShipObject> teamShipsMap = new HashMap<String, ShipObject>();
+                    teamShipNamesPicker.clear();
+
+                    //Load dialog
+                    updateMessage("Loading ships . . .");
+                    updateProgress(0, 41);
+                    for (int i = 3; i <= 43; i++) {
+                        URL cellFeedUrl = MainScreenController.createURI(shipsWorksheet.getCellFeedUrl().toString(), i, "Ships");
+                        CellFeed cellFeed = MainScreenController.getFeed(service, cellFeedUrl);
+                        List<CellEntry> cellEntryList = cellFeed.getEntries();
+						System.out.println("Adding");
+                        try {
+							teamShipsMap.put(cellEntryList.get(0).getCell().getValue(),  //Key value by name
+									new ShipObject(cellEntryList.get(0).getCell().getValue(), // Ships name
+											Integer.valueOf(cellEntryList.get(1).getCell().getValue()), // Ships close range weapon count
+											Integer.valueOf(cellEntryList.get(2).getCell().getValue()), // Ships middle range weapon count
+											Integer.valueOf(cellEntryList.get(3).getCell().getValue()), // Ships long range weapon count
+											MainScreenController.calcShield(cellEntryList.get(4).getCell().getValue(),
+													cellEntryList.get(5).getCell().getValue(),
+													cellEntryList.get(6).getCell().getValue(),
+													team), // Ships shield
+											MainScreenController.calcArmor(cellEntryList.get(8).getCell().getValue(),
+													cellEntryList.get(9).getCell().getValue(),
+													cellEntryList.get(10).getCell().getValue(),
+													team), // Ships armor
+											MainScreenController.calcShieldRegen(cellEntryList.get(4).getCell().getValue(),
+													cellEntryList.get(5).getCell().getValue(),
+													cellEntryList.get(6).getCell().getValue(),
+													team), // Ships shield regen
+											MainScreenController.calcArmorRegen(cellEntryList.get(8).getCell().getValue(),
+													cellEntryList.get(9).getCell().getValue(),
+													cellEntryList.get(10).getCell().getValue(),
+													team), // Ships armor regen
+											Integer.valueOf(cellEntryList.get(12).getCell().getValue()), //Mobility
+											Double.valueOf(cellEntryList.get(13).getCell().getValue().replace(",", "."))
+									));
+						}
+						catch (Exception e)
+						{
+							System.out.println(e);
+						}
+
+                        updateProgress(i - 2, 41);
+                        updateMessage("Loaded " + (i - 2) + " ships!");
+                        teamShipNamesPicker.add(cellEntryList.get(0).getCell().getValue());
+                        System.out.println("Team 1 - " + cellEntryList.get(0).getCell().getValue());
+                    }
+
+                    if (team.equals("team1"))
+                        team1ShipsMap = teamShipsMap;
+                    else
+                        team2ShipsMap = teamShipsMap;
+
+                    updateMessage("ShipsLoaded.");
+                    return true;
+                }
+            };
+        }
+    }
+
+    private static class WeaponDataService extends Service<Map<String, WeaponObject>> {
+
+        private WorksheetEntry weaponWorksheet;
+        private SpreadsheetService service;
+        private String team;
+
+        public final void setWorksheet(WorksheetEntry _worksheet) {
+            this.weaponWorksheet = _worksheet;
+        }
+
+        public final void setService(SpreadsheetService _service) {
+            this.service = _service;
+        }
+
+        public final void setTeam(String _team) {
+            this.team = _team;
+        }
+
+
+        @Override
+        protected Task<Map<String, WeaponObject>> createTask() {
+            return new Task<Map<String, WeaponObject>>() {
+                @Override
+                protected Map<String, WeaponObject> call() throws InterruptedException {
+
+                    Map<String, WeaponObject> weaponsMap = new HashMap<String, WeaponObject>();
+                    teamWeaponNamesPicker.clear();
+
+                    //Load dialog
+                    updateMessage("Loading weapons . . .");
+                    updateProgress(0, 26);
+
+                    int index = 0;
+                    for (int i = 2; i<= 31; i++) {
+                        int distance = 1;
+                        if (i > 12)
+                            distance = 2;
+                        if (i > 22)
+                            distance = 3;
+						System.out.println("Index = " +  i);
+                        if (i != 2 && i != 12 && i != 22)
+                        {
+							try
+							{
+								URL cellFeedUrl = createURI(weaponWorksheet.getCellFeedUrl().toString(), i, "Weapons");
+								CellFeed cellFeed = getFeed(service, cellFeedUrl);
+								List<CellEntry> cellEntryList = cellFeed.getEntries();
+								weaponsMap.put(cellEntryList.get(0).getCell().getValue(), // Weapon name key
+										new WeaponObject(cellEntryList.get(0).getCell().getValue(),  // Weapon name
+												Integer.valueOf(cellEntryList.get(1).getCell().getValue()), // Weapon type
+												Double.valueOf(cellEntryList.get(2).getCell().getValue().replace(",",".")), // Weapon damage
+												Integer.valueOf(cellEntryList.get(3).getCell().getValue()), // Weapon magazine
+												Integer.valueOf(cellEntryList.get(4).getCell().getValue()), // Weapon reload
+												distance, // Weapon distance
+												Double.valueOf(cellEntryList.get(6).getCell().getValue().replace(",",".")), //wearout
+												Double.valueOf(cellEntryList.get(8).getCell().getValue().replace(",",".")), // energy
+												Integer.valueOf(cellEntryList.get(9).getCell().getValue()) // rotation
+										));
+								teamWeaponNamesPicker.add(cellEntryList.get(0).getCell().getValue());
+
+								index ++;
+
+								System.out.println(cellEntryList.get(0).getCell().getValue());
+							}
+							catch (Exception e)
+							{
+								updateMessage(e.getMessage());
+							}
+
+								updateProgress((index + 1), 26);
+								updateMessage("Loaded " + (index + 1) + " weapons!");
+
+
+
+                        }
+                        else
+                        {
+                            switch(i){
+                                default: System.out.print("");
+                                case 2:
+                                {
+                                    weaponsMap.put("Ближняя дистанция", null);
+                                    teamWeaponNamesPicker.add("<Ближняя дистанция>");
+                                    System.out.println("Ближняя дистанция");
+                                    break;
+                                }
+                                case 12:
+                                {
+                                    weaponsMap.put("Средняя дистанция", null);
+                                    teamWeaponNamesPicker.add("<Средняя дистанция>");
+                                    System.out.println("Средняя дистанция");
+                                    break;
+                                }
+                                case 22:
+                                {
+                                    weaponsMap.put("Дальняя дистанция", null);
+                                    teamWeaponNamesPicker.add("<Дальняя дистанция>");
+                                    System.out.println("Дальняя дистанция");
+                                    break;
+                                }
+                            }
+
+                        }
+                        System.out.println("teamWeaponNamesPicker size :" + teamWeaponNamesPicker.size());
+                    }
+
+                    return weaponsMap;
+                }
+            };
+        }
+
 
     }
 }

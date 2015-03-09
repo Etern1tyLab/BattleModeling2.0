@@ -44,7 +44,6 @@ public class ModellingScreenController implements Initializable, ControlledScree
 
 	//TODO Change to scaled
 	public int ShipMobility = 50;
-	public int TurretRotationSpeed = 50;
 	public double ShipSignature = 0.5d;
 	public double TurretSignature = 0.5d;
 	public double TurretMod = 0.5d;
@@ -56,17 +55,17 @@ public class ModellingScreenController implements Initializable, ControlledScree
 	@FXML
 	private TreeView<String> team2TreeView;
 	@FXML
-	private AreaChart<Integer,Integer> team1DamageChart;
+	private LineChart<Integer,Double> team1DamageChart;
 	@FXML
-	private AreaChart<Integer,Integer> team2DamageChart;
+	private LineChart<Integer,Double> team2DamageChart;
 	@FXML
-	private AreaChart<Integer,Integer> team1ShieldChart;
+	private LineChart<Integer,Double> team1ShieldChart;
 	@FXML
-	private AreaChart<Integer,Integer> team2ShieldChart;
+	private LineChart<Integer,Double> team2ShieldChart;
 	@FXML
-	private AreaChart<Integer,Integer> team1ArmorChart;
+	private LineChart<Integer,Double> team1ArmorChart;
 	@FXML
-	private AreaChart<Integer,Integer> team2ArmorChart;
+	private LineChart<Integer,Double> team2ArmorChart;
 
 
 	@Override
@@ -113,7 +112,7 @@ public class ModellingScreenController implements Initializable, ControlledScree
 		grid.setRows(rows);
 
 		SpreadsheetView spv = new SpreadsheetView(grid);
-		spv.setMinSize(724, 506);
+		spv.setMinSize(724, 500);
 		modSpreadSheet.getChildren().add(spv);
 
 
@@ -141,10 +140,21 @@ public class ModellingScreenController implements Initializable, ControlledScree
 				// do what ever you want
 
 				int selectedIndex = team1TreeView.getSelectionModel().getSelectedIndex() - 1;
-				team1DamageChart.getData().add(createDamageChart(selectedIndex));
-				team1ShieldChart.getData().add(createShieldChart(selectedIndex));
-				team1ArmorChart.getData().add(createArmorChart(selectedIndex));
 
+				ObservableList<XYChart.Series<Integer, Double>> lineChartDataDamage = FXCollections.observableArrayList();
+				lineChartDataDamage.add(createDamageChart(selectedIndex));
+				team1DamageChart.setData(lineChartDataDamage);
+				team1DamageChart.createSymbolsProperty();
+
+				ObservableList<XYChart.Series<Integer, Double>> lineChartDataShield = FXCollections.observableArrayList();
+				lineChartDataShield.add(createShieldChart(selectedIndex));
+				team1ShieldChart.setData(lineChartDataShield);
+				team1ShieldChart.createSymbolsProperty();
+
+				ObservableList<XYChart.Series<Integer, Double>> lineChartDataArmor = FXCollections.observableArrayList();
+				lineChartDataArmor.add(createArmorChart(selectedIndex));
+				team1ArmorChart.setData(lineChartDataArmor);
+				team1ArmorChart.createSymbolsProperty();
 			}
 
 		});
@@ -169,49 +179,62 @@ public class ModellingScreenController implements Initializable, ControlledScree
 				// do what ever you want
 
 				int selectedIndex = team2TreeView.getSelectionModel().getSelectedIndex() + team1Ships.size() - 1;
-				team2DamageChart.getData().add(createDamageChart(selectedIndex));
-				team2ShieldChart.getData().add(createShieldChart(selectedIndex));
-				team2ArmorChart.getData().add(createArmorChart(selectedIndex));
+
+				ObservableList<XYChart.Series<Integer, Double>> lineChartDataDamage = FXCollections.observableArrayList();
+				lineChartDataDamage.add(createDamageChart(selectedIndex));
+				team2DamageChart.setData(lineChartDataDamage);
+				team2DamageChart.createSymbolsProperty();
+
+				ObservableList<XYChart.Series<Integer, Double>> lineChartDataShield = FXCollections.observableArrayList();
+				lineChartDataShield.add(createShieldChart(selectedIndex));
+				team2ShieldChart.setData(lineChartDataShield);
+				team2ShieldChart.createSymbolsProperty();
+
+				ObservableList<XYChart.Series<Integer, Double>> lineChartDataArmor = FXCollections.observableArrayList();
+				lineChartDataArmor.add(createArmorChart(selectedIndex));
+				team2ArmorChart.setData(lineChartDataArmor);
+				team2ArmorChart.createSymbolsProperty();
+
+
 			}
 
 		});
 	}
 
-	public XYChart.Series createDamageChart(int _selectedIndex)
+	public LineChart.Series<Integer, Double> createDamageChart(int _selectedIndex)
 	{
-
-		XYChart.Series series = new XYChart.Series();
+		LineChart.Series<Integer, Double> series = new LineChart.Series<Integer, Double>();
 		for (int i = 1; i < grid.getRowCount(); i++)
 		{
 			ObservableList<SpreadsheetCell> cell = grid.getRows().get(i);
-			Integer time = (int) Double.parseDouble(cell.get(0).getText());
-			Integer damage = (int) Double.parseDouble(cell.get(1 + _selectedIndex * 3).getText());
+			Integer time = Integer.valueOf(cell.get(0).getText());
+			Double damage = Double.parseDouble(cell.get(1 + _selectedIndex * 3).getText());
 			series.getData().add(new XYChart.Data(time, damage));
 		}
 		return series;
 	}
 
-	public XYChart.Series createShieldChart(int _selectedIndex)
+	public LineChart.Series<Integer, Double> createShieldChart(int _selectedIndex)
 	{
-		XYChart.Series series = new XYChart.Series();
+		LineChart.Series<Integer, Double> series = new LineChart.Series<Integer, Double>();
 		for (int i = 1; i < grid.getRowCount(); i++)
 		{
 			ObservableList<SpreadsheetCell> cell = grid.getRows().get(i);
-			Integer time = (int) Double.parseDouble(cell.get(0).getText());
-			Integer damage = (int) Double.parseDouble(cell.get(2 + _selectedIndex * 3).getText());
+			Integer time = Integer.valueOf(cell.get(0).getText());
+			Double damage = Double.parseDouble(cell.get(2 + _selectedIndex * 3).getText());
 			series.getData().add(new XYChart.Data(time, damage));
 		}
 		return series;
 	}
 
-	public XYChart.Series createArmorChart(int _selectedIndex)
+	public LineChart.Series<Integer, Double> createArmorChart(int _selectedIndex)
 	{
-		XYChart.Series series = new XYChart.Series();
+		LineChart.Series<Integer, Double> series = new LineChart.Series<Integer, Double>();
 		for (int i = 1; i < grid.getRowCount(); i++)
 		{
 			ObservableList<SpreadsheetCell> cell = grid.getRows().get(i);
-			Integer time = (int) Double.parseDouble(cell.get(0).getText());
-			Integer damage = (int) Double.parseDouble(cell.get(3 + _selectedIndex * 3).getText());
+			Integer time = Integer.valueOf(cell.get(0).getText());
+			Double damage = Double.parseDouble(cell.get(3 + _selectedIndex * 3).getText());
 			series.getData().add(new XYChart.Data(time, damage));
 		}
 		return series;
@@ -489,24 +512,11 @@ public class ModellingScreenController implements Initializable, ControlledScree
 
 		if (_weapon.getCurrentMagazine() != 0)
 		{
-			if (_weapon.getCurrentCd() == 0)
-			{
-				damage = calculateDamage(_weapon.getDamage(), stats);
+
+				damage = calculateDamage(_weapon, stats, _team);
 				//currentDPS += currentTurret["damage"];
-				_weapon.setCurrentCd(_weapon.getCdTime());
 				_weapon.setCurrentMagazine(_weapon.getCurrentMagazine() - 1);
 
-				if (_weapon.getCurrentMagazine() == 0)
-				{
-					_weapon.setCurrentCd(0);
-				}
-			}
-			else
-			{
-				_weapon.setCurrentCd(_weapon.getCurrentCd() - 1);
-				damage = 0;
-				//currentTurretRange.setValue(0);
-			}
 		}
 		else
 		{
@@ -514,7 +524,6 @@ public class ModellingScreenController implements Initializable, ControlledScree
 			{
 
 				_weapon.setCurrentReloadTime(_weapon.getReloadTime());
-				_weapon.setCurrentCd(0);
 				damage = 0;
 				//currentTurretRange.setValue(0);
 			}
@@ -526,8 +535,6 @@ public class ModellingScreenController implements Initializable, ControlledScree
 				{
 					_weapon.setCurrentMagazine(_weapon.getMagazine());
 				}
-
-				_weapon.setCurrentCd(0);
 				damage = 0;
 				//currentTurretRange.setValue(0);
 
@@ -538,14 +545,27 @@ public class ModellingScreenController implements Initializable, ControlledScree
 		return Math.round(damage * 100.0)/100.0;
 	}
 
-	public double calculateDamage(double _damage, int[] _teamStats)
+	public double calculateDamage(WeaponObject _weapon, int[] _teamStats, String _team)
 	{
+		String attackedTeam = "";
+		int mobility = 0;
+		if (_team.equals("team1")) {
+			attackedTeam = "team2";
+			mobility = team2Ships.get(getTargetedTeamShip(attackedTeam)).getMobility();
+		}
+		else if (_team.equals("team2"))
+		{
+			attackedTeam = "team1";
+			mobility = team1Ships.get(getTargetedTeamShip(attackedTeam)).getMobility();
+		}
+
+
 		int Enviroment = _teamStats[0];
 		int WillPower = _teamStats[1];
 		int Morale = _teamStats[2];
 		int Reaction = _teamStats[3];
 
-		double chanceToHit = Math.pow(0.5f, Math.abs((ShipMobility/TurretRotationSpeed)  * (TurretSignature/ ShipSignature))) + Math.sqrt(WillPower + Morale + Reaction )/ 100 * Enviroment ;
+		double chanceToHit = Math.pow(0.5f, Math.abs((mobility/_weapon.getRotationSpeed())  * (TurretSignature/ ShipSignature))) + Math.sqrt(WillPower + Morale + Reaction )/ 100 * Enviroment ;
 		Random generator = new Random();
 		double number = generator.nextDouble();
 
@@ -553,7 +573,7 @@ public class ModellingScreenController implements Initializable, ControlledScree
 		if (number < chanceToHit)
 		{
 
-			return (chanceToHit + TurretMod) * _damage;
+			return (chanceToHit + TurretMod) * _weapon.getDamageInSec();
 		}
 		else
 		{

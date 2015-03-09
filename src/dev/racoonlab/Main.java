@@ -34,6 +34,8 @@ public class Main extends Application {
         mainContainer.loadScreen(Main.getMainScreenID, Main.getMainScreenFile);
         mainContainer.loadScreen(Main.getModellingScreenID, Main.getModellingScreenFile);
 
+        mainContainer.setStage(primaryStage);
+
         mainContainer.setScreen(Main.getTokenScreenID);
 
         Group root = new Group();

@@ -20,6 +20,31 @@ public class ShipObject implements Serializable {
     private double armor;
     private double currentArmor;
     private double armorRegen;
+	private double maxWeaponEnergy;
+
+	public double getCurrentWeaponEnergy() {
+		return currentWeaponEnergy;
+	}
+
+	public void setCurrentWeaponEnergy(double currentWeaponEnergy) {
+		this.currentWeaponEnergy = currentWeaponEnergy;
+	}
+
+	public double getMaxWeaponEnergy() {
+		return maxWeaponEnergy;
+	}
+
+	public void setMaxWeaponEnergy(double maxWeaponEnergy) {
+		this.maxWeaponEnergy = maxWeaponEnergy;
+	}
+
+	private double currentWeaponEnergy;
+
+	public int getMobility() {
+		return mobility;
+	}
+
+	private int mobility;
 
     private int midSepartorIndex;
     private int longSepartorIndex;
@@ -39,25 +64,25 @@ public class ShipObject implements Serializable {
     }
 
     public double getCurrentArmor() {
-        return currentArmor;
+        return Math.round(currentArmor * 100.0)/100.0;
     }
 
     public void setCurrentArmor(double currentArmor) {
         if (currentArmor < 0)
             this.currentArmor = 0;
         else
-            this.currentArmor = currentArmor;
+            this.currentArmor = Math.round(currentArmor * 100.0)/100.0;;
     }
 
     public double getCurrentShield() {
-        return currentShield;
+        return Math.round(currentShield * 100.0)/100.0;
     }
 
     public void setCurrentShield(double currentShield) {
         if (currentShield < 0)
             this.currentShield = 0;
         else
-            this.currentShield = currentShield;
+            this.currentShield = Math.round(currentShield * 100.0)/100.0;
     }
 
     public List<WeaponObject> getLongWeapons() {
@@ -112,10 +137,10 @@ public class ShipObject implements Serializable {
 
     public ShipObject getClone ()
     {
-        return new ShipObject(this.name, this.closeWeaponCount, this.middleWeaponCount, this.longWeaponCount, this.shield, this.armor, this.shieldRegen, this.armorRegen);
+        return new ShipObject(this.name, this.closeWeaponCount, this.middleWeaponCount, this.longWeaponCount, this.shield, this.armor, this.shieldRegen, this.armorRegen, this.mobility, this.maxWeaponEnergy);
     }
 
-    public ShipObject(String _name, int _closeWeaponCount, int _middleWeaponCount, int _longWeaponCount, double _shield, double _armor, double _shieldRegen, double _armorRegen)
+    public ShipObject(String _name, int _closeWeaponCount, int _middleWeaponCount, int _longWeaponCount, double _shield, double _armor, double _shieldRegen, double _armorRegen, int _mobility, double _maxWeaponEnergy)
     {
         this.name = _name;
         this.closeWeaponCount = _closeWeaponCount;
@@ -127,6 +152,9 @@ public class ShipObject implements Serializable {
         this.armorRegen = _armorRegen;
         this.currentArmor = _armor;
         this.currentShield = _shield;
+		this.mobility = _mobility;
+		this.maxWeaponEnergy = _maxWeaponEnergy;
+		this.currentWeaponEnergy = 0;
     }
 
     public void addWeapon(WeaponObject weaponObject)

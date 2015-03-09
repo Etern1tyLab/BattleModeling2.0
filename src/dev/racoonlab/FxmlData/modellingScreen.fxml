@@ -25,14 +25,14 @@
                               <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <AreaChart fx:id="team1DamageChart" prefHeight="439.0" prefWidth="573.0">
+                                          <LineChart fx:id="team1DamageChart" prefHeight="441.0" prefWidth="573.0">
                                             <xAxis>
-                                              <CategoryAxis label="Time" side="BOTTOM" />
+                                              <NumberAxis label="Time" side="BOTTOM" />
                                             </xAxis>
                                             <yAxis>
                                               <NumberAxis label="Damage" side="LEFT" />
                                             </yAxis>
-                                          </AreaChart>
+                                          </LineChart>
                                        </children>
                                     </AnchorPane>
                               </content>
@@ -41,14 +41,14 @@
                               <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <AreaChart fx:id="team1ShieldChart" prefHeight="439.0" prefWidth="573.0">
-                                             <xAxis>
-                                                <CategoryAxis label="Time" side="BOTTOM" />
-                                             </xAxis>
-                                             <yAxis>
-                                                <NumberAxis label="Shield" side="LEFT" />
-                                             </yAxis>
-                                          </AreaChart>
+                                          <LineChart fx:id="team1ShieldChart" prefHeight="438.0" prefWidth="572.0">
+                                            <xAxis>
+                                              <NumberAxis label="Time" side="BOTTOM" />
+                                            </xAxis>
+                                            <yAxis>
+                                              <NumberAxis label="Shield" side="LEFT" />
+                                            </yAxis>
+                                          </LineChart>
                                        </children>
                                     </AnchorPane>
                               </content>
@@ -57,14 +57,14 @@
                               <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <AreaChart fx:id="team1ArmorChart" prefHeight="439.0" prefWidth="573.0">
-                                             <xAxis>
-                                                <CategoryAxis label="Time" side="BOTTOM" />
-                                             </xAxis>
-                                             <yAxis>
-                                                <NumberAxis label="Armor" side="LEFT" />
-                                             </yAxis>
-                                          </AreaChart>
+                                          <LineChart fx:id="team1ArmorChart">
+                                            <xAxis>
+                                              <NumberAxis label="Time" side="BOTTOM" />
+                                            </xAxis>
+                                            <yAxis>
+                                              <NumberAxis label="Armor" side="LEFT" />
+                                            </yAxis>
+                                          </LineChart>
                                        </children>
                                     </AnchorPane>
                               </content>
@@ -85,14 +85,14 @@
                                  <content>
                                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <AreaChart fx:id="team2DamageChart" prefHeight="439.0" prefWidth="573.0">
-                                             <xAxis>
-                                                <CategoryAxis label="Time" side="BOTTOM" />
-                                             </xAxis>
-                                             <yAxis>
-                                                <NumberAxis label="Damage" side="LEFT" />
-                                             </yAxis>
-                                          </AreaChart>
+                                          <LineChart fx:id="team2DamageChart">
+                                            <xAxis>
+                                              <NumberAxis label="Time" side="BOTTOM" />
+                                            </xAxis>
+                                            <yAxis>
+                                              <NumberAxis label="Damage" side="LEFT" />
+                                            </yAxis>
+                                          </LineChart>
                                        </children>
                                     </AnchorPane>
                                  </content>
@@ -101,14 +101,14 @@
                                  <content>
                                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <AreaChart fx:id="team2ShieldChart" prefHeight="439.0" prefWidth="573.0">
-                                             <xAxis>
-                                                <CategoryAxis label="Time" side="BOTTOM" />
-                                             </xAxis>
-                                             <yAxis>
-                                                <NumberAxis label="Shield" side="LEFT" />
-                                             </yAxis>
-                                          </AreaChart>
+                                          <LineChart fx:id="team2ShieldChart">
+                                            <xAxis>
+                                              <NumberAxis label="Time" side="BOTTOM" />
+                                            </xAxis>
+                                            <yAxis>
+                                              <NumberAxis label="Shield" side="LEFT" />
+                                            </yAxis>
+                                          </LineChart>
                                        </children>
                                     </AnchorPane>
                                  </content>
@@ -117,14 +117,14 @@
                                  <content>
                                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <AreaChart fx:id="team2ArmorChart" prefHeight="439.0" prefWidth="573.0">
-                                             <xAxis>
-                                                <CategoryAxis label="Time" side="BOTTOM" />
-                                             </xAxis>
-                                             <yAxis>
-                                                <NumberAxis label="Armor" side="LEFT" />
-                                             </yAxis>
-                                          </AreaChart>
+                                          <LineChart fx:id="team2ArmorChart">
+                                            <xAxis>
+                                              <NumberAxis label="Time" side="BOTTOM" />
+                                            </xAxis>
+                                            <yAxis>
+                                              <NumberAxis label="Armor" side="LEFT" />
+                                            </yAxis>
+                                          </LineChart>
                                        </children>
                                     </AnchorPane>
                                  </content>

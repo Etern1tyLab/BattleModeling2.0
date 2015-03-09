@@ -16,12 +16,14 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class ScreensController  extends StackPane {
     //Holds the screens to be displayed
 
     private HashMap<String, Node> screens = new HashMap<String, Node>();
+    private Stage stage;
 
     private Credential credential;
 
@@ -32,6 +34,14 @@ public class ScreensController  extends StackPane {
     private List<ShipObject> team2Ships = new ArrayList();
     private int[] team2Stats;
     private int time;
+
+    public Stage getStage() {
+        return stage;
+    }
+
+    public void setStage(Stage primaryStage) {
+        this.stage = primaryStage;
+    }
 
     public int getTime() {
         return time;
@@ -176,4 +186,6 @@ public class ScreensController  extends StackPane {
             return true;
         }
     }
+
+
 }

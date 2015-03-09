@@ -7,10 +7,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="GOauth2Libs" level="project" />
-    <orderEntry type="library" name="GOauth2Jar" level="project" />
-    <orderEntry type="library" name="GDataApi/deps" level="project" />
-    <orderEntry type="library" name="GDataApi/lib" level="project" />
     <orderEntry type="library" name="controlsfx-8.20.8" level="application" />
+    <orderEntry type="library" name="GoogleSpreadSheetAPILibs" level="project" />
+    <orderEntry type="library" name="GoogleSpreadSheetAPIDeps" level="project" />
+    <orderEntry type="library" name="GoogleApiClient" level="project" />
   </component>
 </module>
